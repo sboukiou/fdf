@@ -4,8 +4,8 @@ NAME=fdf
 CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3
 MLX_FLAGS=-Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
-MAIN_SRC=main.c
-MAIN_OBJ=main.o
+MAIN_SRCS=main.c drawing.c geometry.c
+MAIN_OBJS=$(MAIN_SRCS:%.c=%.o)
 
 LIBFT_DIR=./dependencies/libft
 PRINTF_DIR=./dependencies/ft_printf
@@ -21,7 +21,7 @@ PRINTF_OBJS=$(PRINTF_SRCS:%.c=%.o)
 DEPS=$(LIBFT_OBJS) $(PRINTF_OBJS)
 
 
-OBJ_ALL=$(MAIN_OBJ) $(LIBFT_OBJS) $(PRINTF_OBJS)
+OBJ_ALL=$(MAIN_OBJS) $(LIBFT_OBJS) $(PRINTF_OBJS)
 
 %.o: %.c
 	$(CC) $(CMP_FLAGS) -c $< -o $@
