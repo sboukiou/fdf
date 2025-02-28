@@ -4,14 +4,14 @@ NAME=fdf
 CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3
 MLX_FLAGS=-Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
-MAIN_SRCS=main.c drawing.c geometry.c
+MAIN_SRCS=main.c drawing.c geometry.c parser.c
 MAIN_OBJS=$(MAIN_SRCS:%.c=%.o)
 
 LIBFT_DIR=./dependencies/libft
 PRINTF_DIR=./dependencies/ft_printf
 
 LIBFT_SRCS=$(LIBFT_DIR)/ft_atoi.c $(LIBFT_DIR)/ft_isdigit.c $(LIBFT_DIR)/ft_split.c $(LIBFT_DIR)/ft_strlen.c\
-		   $(LIBFT_DIR)/ft_bzero.c $(LIBFT_DIR)/ft_itoa.c $(LIBFT_DIR)/ft_strlcat.c\
+		   $(LIBFT_DIR)/ft_bzero.c $(LIBFT_DIR)/ft_itoa.c $(LIBFT_DIR)/ft_strlcat.c $(LIBFT_DIR)/ft_memcpy.c\
 		   $(LIBFT_DIR)/ft_strncmp.c $(LIBFT_DIR)/ft_calloc.c  $(LIBFT_DIR)/ft_memset.c   $(LIBFT_DIR)/ft_strlcpy.c
 LIBFT_OBJS=$(LIBFT_SRCS:%.c=%.o)
 
