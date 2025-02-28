@@ -19,11 +19,11 @@
 # define MLX_INIT "MLX_INIT"
 # define MLX_WINDOW "MLX_WINDOW"
 # define ERROR -1
-# define SUCESS 0
+# define SUCCESS 0
 
 /*Defining Window demensions*/
-# define WINDOW_HEIGHT 1000
-# define WINDOW_WIDTH 1000
+# define WINDOW_HEIGHT 1900
+# define WINDOW_WIDTH 1900
 
 /*Defining Colors*/
 # define RED 0xFF0000
@@ -54,9 +54,13 @@ typedef struct s_pt
 
 /*Geometry Funcs*/
 float	distance(t_pt a, t_pt b);
+float	triangle_area(t_pt a, t_pt b, t_pt c);
 
 /*Drawing Funcs*/
 int	draw_circle(t_mlx_session *session);
+int draw_segement(t_mlx_session *session, t_pt a, t_pt b);
+int	draw_shapes(t_mlx_session *session);
+int draw_line(t_mlx_session *session, t_pt a, t_pt b);
 
 
 #endif
