@@ -35,6 +35,6 @@ size_t	ft_strlcat(char *dest, const char *src, size_t size);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_atoi(const char *nptr);
 void	*ft_calloc(size_t nmemb, size_t size);
-char	**ft_split(const char *s, char c);
+char	**ft_split(const char *str, char *spec);
 char	*ft_itoa(int n);
 #endif
