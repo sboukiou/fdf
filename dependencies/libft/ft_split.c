@@ -12,7 +12,31 @@
 
 #include "libft.h"
 
-static char	*ft_create_string(const char *str, char c)
+#define TRUE 1
+#define FALSE 0
+
+/**
+* Checks if a string contains a char
+*/
+static int	is_included(char *str, char c)
+{
+	int	idx;
+
+	idx = 0;
+	while (str[idx])
+	{
+		if (str[idx] == c)
+			return (TRUE);
+		idx++;
+	}
+	return (FALSE);
+}
+
+/**
+	* Creates a string from a begin bytes until a given
+	* delimiters
+	*/
+static char	*ft_create_string(const char *str, char *spec)
 {
 	size_t	size;
 	char	*buffer;
@@ -20,7 +44,7 @@ static char	*ft_create_string(const char *str, char c)
 	if (!str)
 		return (NULL);
 	size = 0;
-	while (str[size] && str[size] != c)
+	while (str[size] && !is_included(spec, str[size]))
 		size++;
 	buffer = ft_calloc(size + 1, sizeof(char));
 	if (!buffer)
@@ -45,7 +69,7 @@ static char	**free_all(char **list)
 	return (NULL);
 }
 
-static char	**ft_allocate_list(const char *str, char c)
+static char	**ft_allocate_list(const char *str, char *spec)
 {
 	char	**list;
 	int		index;
@@ -58,18 +82,18 @@ static char	**ft_allocate_list(const char *str, char c)
 		return (NULL);
 	while (str[index])
 	{
-		while (str[index] && str[index] == c)
+		while (str[index] && is_included(spec, str[index]))
 			index++;
 		if (str[index])
 			size++;
-		while (str[index] && str[index] != c)
+		while (str[index] && !is_included(spec, str[index]))
 			index++;
 	}
 	list = ft_calloc(size + 1, sizeof(char *));
 	return (list);
 }
 
-char	**ft_split(const char *str, char c)
+char	**ft_split(const char *str, char *spec)
 {
 	int		index;
 	int		size;
@@ -77,21 +101,21 @@ char	**ft_split(const char *str, char c)
 
 	index = 0;
 	size = 0;
-	list = ft_allocate_list(str, c);
+	list = ft_allocate_list(str, spec);
 	if (!list)
 		return (NULL);
 	while (str[index])
 	{
-		while (str[index] && str[index] == c)
+		while (str[index] && is_included(spec, str[index]))
 			index++;
 		if (str[index])
 		{
-			list[size] = ft_create_string(str + index, c);
+			list[size] = ft_create_string(str + index, spec);
 			if (list[size] == NULL)
 				return (free_all(list));
 			size++;
 		}
-		while (str[index] && str[index] != c)
+		while (str[index] && !is_included(spec, str[index]))
 			index++;
 	}
 	list[size] = NULL;
