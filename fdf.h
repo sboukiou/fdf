@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
+#include <fcntl.h>
 
 /*Including Dependencies headers*/
 # include "dependencies/libft/libft.h"
@@ -62,6 +63,11 @@ int draw_segement(t_mlx_session *session, t_pt a, t_pt b);
 int	draw_shapes(t_mlx_session *session);
 int draw_line(t_mlx_session *session, t_pt a, t_pt b);
 
+
+/*Other functions*/
+void	terminate(char *code);
+void	*ft_realloc(void *old,size_t old_size, size_t new_size);
+char *read_file(char *filename);
 
 #endif
 
