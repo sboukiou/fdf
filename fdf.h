@@ -11,6 +11,9 @@
 # include "dependencies/libft/libft.h"
 # include "dependencies/ft_printf/ft_printf.h"
 
+# define TRUE 1
+# define FALSE 0
+
 /*Defining Macros for events*/
 # define ESCAPE 65307
 # define KEY_PRESS_EVENT 2
@@ -19,7 +22,8 @@
 /*Defining Macros for error management*/
 # define MLX_INIT "MLX_INIT"
 # define MLX_WINDOW "MLX_WINDOW"
-# define ERROR -1
+
+# define FAIL -1
 # define SUCCESS 0
 
 /*Defining Window demensions*/
@@ -68,6 +72,11 @@ int draw_line(t_mlx_session *session, t_pt a, t_pt b);
 void	terminate(char *code);
 void	*ft_realloc(void *old,size_t old_size, size_t new_size);
 char *read_file(char *filename);
-
+char *read_line(int fd);
+void	free_list(char **list);
+size_t	list_len(char **list);
+int	check_map_elements(char ***map);
+void	free_double_list(char ***list);
+int	parser(int ac, char **av);
 #endif
 

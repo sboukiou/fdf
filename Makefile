@@ -1,7 +1,7 @@
 CC=cc
 NAME=fdf
 
-CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3
+CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -g
 MLX_FLAGS=-Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
 MAIN_SRCS=main.c drawing.c geometry.c parser.c

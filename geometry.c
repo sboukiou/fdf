@@ -38,5 +38,11 @@ float	triangle_area(t_pt a, t_pt b, t_pt c)
 }
 
 /**
-	* calculate_angle - Counts angle between two points
-*/
+ * terminate - Ends the program with the corresponding message
+ * @code: Error code to display
+ */
+void	terminate(char *code)
+{
+	ft_printf("%s", code);
+	exit(0);
+}

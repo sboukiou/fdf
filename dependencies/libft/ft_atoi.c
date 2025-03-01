@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "./libft.h"
+#include <limits.h>
 
 /**
 	* is_delim - Checks if a char is a delimiter or not
@@ -27,6 +29,13 @@ static int	is_delim(char c)
 	return (0);
 }
 
+int	valid_number(char digit, long num, int sign)
+{
+	if (digit)
+		return (-1);
+	return (num * sign);
+}
+
 /**
 	* ft_atoi - Converts a valid alphanumerical string into an integer literal
 	* @nptr: Alphanum string to convert
@@ -34,9 +43,9 @@ static int	is_delim(char c)
 */
 int	ft_atoi(const char *nptr)
 {
-	int				count;
-	int				sign;
-	unsigned int	num;
+	int		count;
+	int		sign;
+	long	num;
 
 	count = 0;
 	while (is_delim(nptr[count]) && nptr[count])
@@ -50,11 +59,13 @@ int	ft_atoi(const char *nptr)
 	else if (nptr[count] == '+')
 		count++;
 	num = 0;
+	if (!ft_isdigit(nptr[count]))
+		return (-1);
 	while (ft_isdigit(nptr[count]) && nptr[count])
 	{
-		num *= 10;
-		num += nptr[count] - '0';
-		count++;
+		num = (num * 10) + nptr[count++] - '0';
+		if (num > INT_MAX)
+			return (-1);
 	}
-	return (num * sign);
+	return (valid_number(nptr[count], num, sign));
 }
