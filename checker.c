@@ -16,7 +16,7 @@ static int	is_included_in_hex(char c)
 	return (FALSE);
 }
 
-static int	is_hex(char *str)
+int	check_color(char *str)
 {
 	size_t	idx;
 
@@ -36,7 +36,7 @@ static int	is_hex(char *str)
 	return (TRUE);
 }
 
-static int	check_one_map_element(char *str)
+int	check_values(char *str)
 {
 	char	**list;
 
@@ -47,7 +47,7 @@ static int	check_one_map_element(char *str)
 		return (ft_printf("token length more than 2\n"), free_list(list), FAIL);
 	if (ft_atoi(list[0]) == -1 && ft_strcmp(list[0], "-1"))
 		return (ft_printf("wrong number char given\n"), free_list(list), FAIL);
-	if (list[1] && is_hex(list[1]) == FALSE)
+	if (list[1] && check_color(list[1]) == FALSE)
 		return (free_list(list),  FAIL);
 	free_list(list);
 	return (SUCCESS);
@@ -65,7 +65,7 @@ int	check_map_elements(char ***map)
 		jdx = 0;
 		while (map[idx][jdx])
 		{
-			if (check_one_map_element(map[idx][jdx]) == FAIL)
+			if (check_values(map[idx][jdx]) == FAIL)
 				return (FAIL);
 			jdx++;
 		}

@@ -27,8 +27,8 @@
 # define SUCCESS 0
 
 /*Defining Window demensions*/
-# define WINDOW_HEIGHT 1900
-# define WINDOW_WIDTH 1900
+# define WINDOW_HEIGHT 1920
+# define WINDOW_WIDTH 1080
 
 /*Defining Colors*/
 # define RED 0xFF0000
@@ -53,13 +53,16 @@ typedef struct s_pt
 	int	x;
 	int	y;
 	int	z;
+	int	color;
 }	t_pt;
+
 
 /*Functions prototypes*/
 
 /*Geometry Funcs*/
 float	distance(t_pt a, t_pt b);
 float	triangle_area(t_pt a, t_pt b, t_pt c);
+t_pt	iso_project(t_pt a);
 
 /*Drawing Funcs*/
 int	draw_circle(t_mlx_session *session);
@@ -78,5 +81,10 @@ size_t	list_len(char **list);
 int	check_map_elements(char ***map);
 void	free_double_list(char ***list);
 char	***parser(int ac, char **av);
+size_t	ft_min(size_t a, size_t b);
+size_t	ft_max(size_t a, size_t b);
+t_pt	**get_full_map(int ac, char **av);
+int	check_values(char *str);
+int	check_color(char *str);
 #endif
 
