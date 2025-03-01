@@ -77,6 +77,6 @@ void	free_list(char **list);
 size_t	list_len(char **list);
 int	check_map_elements(char ***map);
 void	free_double_list(char ***list);
-int	parser(int ac, char **av);
+char	***parser(int ac, char **av);
 #endif
 
