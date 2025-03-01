@@ -74,7 +74,7 @@ size_t	list_len(char **list)
 		len++;
 	return (len);
 }
-int	parser(int ac, char **av)
+char	***parser(int ac, char **av)
 {
 	char	*file_read;
 	char	**lines;
@@ -88,25 +88,25 @@ int	parser(int ac, char **av)
 	}
 	file_read = read_file(av[1]);
 	if (!file_read)
-		return (ft_printf("reading failed\n"), FAIL);
+		return (ft_printf("reading failed\n"), NULL);
 	lines = ft_split(file_read, "\n");
 	free(file_read);
 	if (!lines)
-		return (ft_printf("Allocation for lines failed\n"), FAIL);
+		return (ft_printf("Allocation for lines failed\n"), NULL);
 	map = (char ***)ft_calloc(list_len(lines) + 1, sizeof(char **));
 	if (!map)
-		return (ft_printf("splitting lines into map tokens failed\n"), free_list(lines), FAIL);
+		return (ft_printf("splitting lines into map tokens failed\n"), free_list(lines), NULL);
 	i = 0;
 	while (lines[i])
 	{
 		map[i] = ft_split(lines[i], " ");
 		if (!map[i] || (list_len(map[i]) != list_len(map[0])))
-			return (ft_printf("Map lines lengths inequal\n"), free_list(lines), free_double_list(map), FAIL);
+			return (ft_printf("Map lines lengths inequal\n"), free_list(lines), free_double_list(map), NULL);
 		i++;
 	}
+	map[i] = NULL;
 	if (check_map_elements(map) == FAIL)
-		return (ft_printf("Map checking failed\n"), free_double_list(map), free_list(lines), FAIL);
-	free_double_list(map);
+		return (ft_printf("Map checking failed\n"), free_double_list(map), free_list(lines), NULL);
 	free_list(lines);
-	return (SUCCESS);
+	return (map);
 }
