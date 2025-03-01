@@ -25,7 +25,7 @@ int	draw_circle(t_mlx_session *session)
 	t_pt	cords;
 
 	if (!session->mlx)
-		return (ERROR);
+		return (FAIL);
 	circle_center.x = WINDOW_WIDTH / 2;
 	circle_center.y = WINDOW_WIDTH / 2;
 	for (int i = 0; i < WINDOW_HEIGHT; i++)
@@ -52,7 +52,7 @@ int draw_segement(t_mlx_session *session, t_pt a, t_pt b)
 	t_pt	cords;
 
 	if (!session->mlx)
-		return (ERROR);
+		return (FAIL);
 	for (int i = 0; i < WINDOW_HEIGHT; i++)
 	{
 		for (int j = 0; j < WINDOW_WIDTH; j++)
@@ -78,7 +78,7 @@ int draw_line(t_mlx_session *session, t_pt a, t_pt b)
 	t_pt	cords;
 
 	if (!session->mlx)
-		return (ERROR);
+		return (FAIL);
 	for (int i = 0; i < WINDOW_HEIGHT; i++)
 	{
 		for (int j = 0; j < WINDOW_WIDTH; j++)
