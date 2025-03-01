@@ -1,10 +1,10 @@
 CC=cc
 NAME=fdf
 
-CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3
+CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -g
 MLX_FLAGS=-Lmlx_linux -lmlx_Linux -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
-MAIN_SRCS=main_parser.c drawing.c geometry.c parser.c
+MAIN_SRCS=main_parser.c drawing.c geometry.c parser.c memory.c checker.c
 MAIN_OBJS=$(MAIN_SRCS:%.c=%.o)
 
 LIBFT_DIR=./dependencies/libft
