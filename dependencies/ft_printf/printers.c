@@ -14,8 +14,7 @@
 
 int	print_char(char c)
 {
-	write(STDOUT_FILENO, &c, 1);
-	return (1);
+	return (write(STDOUT_FILENO, &c, 1));
 }
 
 int	print_string(char *str)
@@ -23,13 +22,9 @@ int	print_string(char *str)
 	size_t	len;
 
 	if (!str)
-	{
-		write(STDOUT_FILENO, "(nil)", 5);
-		return (5);
-	}
+		return (write(STDOUT_FILENO, "(nil)", 5));
 	len = ft_strlen(str);
-	write(STDOUT_FILENO, str, len);
-	return (len);
+	return (write(STDOUT_FILENO, str, len));
 }
 
 int	print_integer(long long number)
