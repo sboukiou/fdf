@@ -1,42 +1,35 @@
 #include "./fdf.h"
-#define FILE_ERROR "Failed to open map file"
+#define FILE_FAIL "Failed to open map file"
 #define BUFFER_SIZE 256
 /**
- * ft_min - Returns the min value of two given
- */
-static size_t	ft_min(size_t a, size_t b) {
-	if (a < b)
-		return (a);
-	return (b);
-}
-
-
-/**
- * ft_realloc - Mimics the behavior of realloc
- * @old: old block to reallocate
- * @old_size: Old block size
- * @new_size:  The new requested size
- * Return: New block or NULL if errors occured
- */
-void	*ft_realloc(void *old,size_t old_size, size_t new_size)
+* read_line - Reads a line from a given filename
+* Return: The line read from file or quits if errors
+* occured
+*/
+char *read_line(int fd)
 {
+	size_t	idx;
+	size_t	total_size;
+	char	*buffer;
 
-	void	*new;
-
-	if (!old)
+	buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
+	if (buffer == NULL)
 		return (NULL);
-	if (new_size == 0)
+	idx = 0;
+	total_size = BUFFER_SIZE;
+	while (read(fd, buffer + idx, 1) > 0)
 	{
-		free(old);
-		return (NULL);
+		if (buffer[idx] == '\n')
+			return (buffer);
+		idx++;
+		if (idx == total_size)
+		{
+			total_size += BUFFER_SIZE;
+			buffer = ft_realloc(buffer, idx, idx + BUFFER_SIZE);
+		}
 	}
-	new = malloc(new_size + 1);
-	if (!new)
-		return (NULL);
-	ft_bzero(new, new_size + 1);
-	ft_memcpy(new, old, ft_min(new_size, old_size));
-	free(old);
-	return (new);
+	buffer = ft_realloc(buffer, idx + BUFFER_SIZE, idx);
+	return (buffer);
 }
 
 /**
@@ -46,14 +39,14 @@ void	*ft_realloc(void *old,size_t old_size, size_t new_size)
 */
 char *read_file(char *filename)
 {
-	size_t	fd;
+	int	fd;
 	size_t	idx;
 	size_t	total_size;
 	char	*buffer;
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		terminate(FILE_ERROR);
+		terminate(FILE_FAIL);
 	buffer = ft_calloc(BUFFER_SIZE, sizeof(char));
 	if (buffer == NULL)
 		return (NULL);
@@ -70,4 +63,53 @@ char *read_file(char *filename)
 	}
 	buffer = ft_realloc(buffer, idx + BUFFER_SIZE, idx);
 	return (buffer);
+}
+
+size_t	list_len(char **list)
+{
+	size_t	len;
+
+	len = 0;
+	while (list[len])
+		len++;
+	return (len);
+}
+int	parser(int ac, char **av)
+{
+	char	*file_read;
+	char	**lines;
+	char	***map;
+	size_t	i;
+
+	if (ac != 2)
+	{
+		ft_printf("args count invalid\n");
+		exit(0);
+	}
+	file_read = read_file(av[1]);
+	if (!file_read)
+		return (FAIL);
+	lines = ft_split(file_read, "\n");
+	free(file_read);
+	if (!lines)
+		return (FAIL);
+	map = (char ***)ft_calloc(list_len(lines) + 1, sizeof(char **));
+	if (!map)
+		return (free_list(lines), FAIL);
+	i = 0;
+	while (lines[i])
+	{
+		map[i] = ft_split(lines[i], " ");
+		if (!map[i] || (list_len(map[i]) != list_len(map[0])))
+			return (free_list(lines), free_double_list(map), FAIL);
+		i++;
+	}
+	if (check_map_elements(map) == FAIL)
+		ft_printf("Map is invalid\n");
+	else
+		ft_printf("Map is valid\n");
+		
+	free_double_list(map);
+	free_list(lines);
+	return (SUCCESS);
 }
