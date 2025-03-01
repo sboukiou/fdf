@@ -88,27 +88,24 @@ int	parser(int ac, char **av)
 	}
 	file_read = read_file(av[1]);
 	if (!file_read)
-		return (FAIL);
+		return (ft_printf("reading failed\n"), FAIL);
 	lines = ft_split(file_read, "\n");
 	free(file_read);
 	if (!lines)
-		return (FAIL);
+		return (ft_printf("Allocation for lines failed\n"), FAIL);
 	map = (char ***)ft_calloc(list_len(lines) + 1, sizeof(char **));
 	if (!map)
-		return (free_list(lines), FAIL);
+		return (ft_printf("splitting lines into map tokens failed\n"), free_list(lines), FAIL);
 	i = 0;
 	while (lines[i])
 	{
 		map[i] = ft_split(lines[i], " ");
 		if (!map[i] || (list_len(map[i]) != list_len(map[0])))
-			return (free_list(lines), free_double_list(map), FAIL);
+			return (ft_printf("Map lines lengths inequal\n"), free_list(lines), free_double_list(map), FAIL);
 		i++;
 	}
 	if (check_map_elements(map) == FAIL)
-		ft_printf("Map is invalid\n");
-	else
-		ft_printf("Map is valid\n");
-		
+		return (ft_printf("Map checking failed\n"), free_double_list(map), free_list(lines), FAIL);
 	free_double_list(map);
 	free_list(lines);
 	return (SUCCESS);
