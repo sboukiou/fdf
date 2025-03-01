@@ -68,6 +68,7 @@ int draw_segement(t_mlx_session *session, t_pt a, t_pt b)
 	return (SUCCESS);
 }
 
+
 /**
  * draw_line - Draws a line  with a corresponding cords
  * @session: Mlx session to draw in
@@ -79,9 +80,10 @@ int draw_line(t_mlx_session *session, t_pt a, t_pt b)
 
 	if (!session->mlx)
 		return (FAIL);
-	for (int i = 0; i < WINDOW_HEIGHT; i++)
+
+	for (size_t i = ft_min(a.y, b.y); i < ft_max(a.y, b.y); i++)
 	{
-		for (int j = 0; j < WINDOW_WIDTH; j++)
+		for (size_t j = ft_min(a.x, b.x); j < ft_max(a.x, b.x); j++)
 		{
 			cords.x = j;
 			cords.y = i;
@@ -90,30 +92,6 @@ int draw_line(t_mlx_session *session, t_pt a, t_pt b)
 				  j, i, RED);
 		}
 	}
-	return (SUCCESS);
-}
-
-/**
- * draw_shapes - Draws a given shapes according to functions
- * @session: Mlx session to draw in
- * Return: 0 on success or -1 on errors
- */
-int	draw_shapes(t_mlx_session *session)
-{
-
-	t_pt	x_seg;
-	/*t_pt	y_seg;*/
-	t_pt	z_seg;
-	t_pt	center;
-
-	center.x = WINDOW_WIDTH / 2;
-	center.y = WINDOW_HEIGHT / 2;
-	z_seg.x =  WINDOW_WIDTH / 2;
-	z_seg.y = 0;
-	x_seg.x = 0;
-	x_seg.y = center.y;
-	draw_segement(session, z_seg, center);
-	draw_line(session, center, x_seg);
 	return (SUCCESS);
 }
 
