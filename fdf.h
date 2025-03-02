@@ -27,13 +27,26 @@
 # define SUCCESS 0
 
 /*Defining Window demensions*/
-# define WINDOW_HEIGHT 1920
-# define WINDOW_WIDTH 1080
+# define WINDOW_HEIGHT 1080
+# define WINDOW_WIDTH 1920
 
 /*Defining Colors*/
 # define RED 0xFF0000
 # define GREEN 0x00FF00
 # define BLUE 0xFF00FF
+
+/**
+ * s_img_data - Data about the image
+ * to be pushed to the window
+ */
+typedef struct	s_img_data {
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_size;
+	int		endian;
+}				t_img_data;
+
 
 /**
 	* s_mlx_session - struct holding addresses
@@ -43,7 +56,9 @@ typedef struct s_mxl_session
 {
 	void	*mlx;
 	void	*mlx_win;
+	t_img_data *img;
 }	t_mlx_session;
+
 
 /**
 	* s_pt - struct holding points cordinations
@@ -54,37 +69,28 @@ typedef struct s_pt
 	int	y;
 	int	z;
 	int	color;
+	int	line_len;
 }	t_pt;
 
 
 /*Functions prototypes*/
 
 /*Geometry Funcs*/
-float	distance(t_pt a, t_pt b);
+int	distance(int x1, int y1, int x2, int y2);
 float	triangle_area(t_pt a, t_pt b, t_pt c);
 t_pt	iso_project(t_pt a);
 
 /*Drawing Funcs*/
+int	draw_square(t_mlx_session *session);
 int	draw_circle(t_mlx_session *session);
-int draw_segement(t_mlx_session *session, t_pt a, t_pt b);
-int	draw_shapes(t_mlx_session *session);
-int draw_line(t_mlx_session *session, t_pt a, t_pt b);
 
+/*Memory functions*/
+void	free_map(t_pt	**map);
 
-/*Other functions*/
-void	terminate(char *code);
-void	*ft_realloc(void *old,size_t old_size, size_t new_size);
-char *read_file(char *filename);
-char *read_line(int fd);
-void	free_list(char **list);
-size_t	list_len(char **list);
-int	check_map_elements(char ***map);
-void	free_double_list(char ***list);
-char	***parser(int ac, char **av);
-size_t	ft_min(size_t a, size_t b);
-size_t	ft_max(size_t a, size_t b);
-t_pt	**get_full_map(int ac, char **av);
-int	check_values(char *str);
-int	check_color(char *str);
+/*Mlx spec funcs*/
+void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
+int	handle_key(int key_code, t_mlx_session *mlx_session);
+void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
+
 #endif
 
