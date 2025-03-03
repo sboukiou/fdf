@@ -12,33 +12,13 @@
 
 #include "fdf.h"
 
-
-/**
- * draw_map_cordinates - Draws Map points based on their given cordinates
- * @session: Mlx session to draw in
- * Return: 0 on success or -1 on errors
- */
-int	draw_map_cordinates(t_mlx_session *session, char ***map)
+int	draw_window_reference(t_mlx_session *session)
 {
-	int	z;
 
-	if (!session || !session->img)
-		return (FAIL);
-	if (!map)
-		return (FAIL);
-	for (int i = 0; map[i]; i++)
-	{
-		for (int j = 0; map[i][j]; j++)
-		{
-			z = ft_atoi(map[i][j]);
-			int x = (j - z) / sqrt(2);
-			int y = (j + 2 * i + z) / sqrt(6);
-			mlx_put_to_image(session->img, x, y, GREEN);
-		}
-	}
-	free_double_list(map);
+	draw_line(session, 0, 0, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 	return (SUCCESS);
 }
+
 
 /**
 	* main - Starting point of the program
@@ -66,7 +46,7 @@ int	main(int ac, char **av)
 	img.img = mlx_new_image(mlx_session.mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
 	mlx_session.img = &img;
-	draw_map_cordinates(&mlx_session, map);
+	draw_window_reference(&mlx_session);
 	mlx_put_image_to_window(mlx_session.mlx, mlx_session.mlx_win, img.img, 0, 0);
 	mlx_hook(mlx_session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &mlx_session);
 	mlx_loop(mlx_session.mlx);
