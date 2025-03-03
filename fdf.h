@@ -35,6 +35,7 @@
 # define GREEN 0x00FF00
 # define BLUE 0xFF00FF
 
+#define SCALE 30
 /**
  * s_img_data - Data about the image
  * to be pushed to the window
@@ -78,19 +79,27 @@ typedef struct s_pt
 /*Geometry Funcs*/
 int	distance(int x1, int y1, int x2, int y2);
 float	triangle_area(t_pt a, t_pt b, t_pt c);
-t_pt	iso_project(t_pt a);
+int	ft_min(int a, int b);
+int	ft_max(int a, int b);
 
 /*Drawing Funcs*/
 int	draw_square(t_mlx_session *session);
+int draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2, int color);
 int	draw_circle(t_mlx_session *session);
 
 /*Memory functions*/
 void	free_map(t_pt	**map);
+void	free_list(char **list);
+void	*ft_realloc(void *old, size_t old_size, size_t new_size);
+void	free_double_list(char ***list);
 
 /*Mlx spec funcs*/
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int	handle_key(int key_code, t_mlx_session *mlx_session);
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
+
+/*Parser functions*/
+char	***parser(int ac, char **av);
 
 #endif
 
