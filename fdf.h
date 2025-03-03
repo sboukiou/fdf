@@ -84,9 +84,9 @@ int	ft_max(int a, int b);
 
 /*Drawing Funcs*/
 int	draw_square(t_mlx_session *session);
-int draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2, int color);
+void draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2) ;
 int	draw_circle(t_mlx_session *session);
-
+int	draw_map_cordinates(t_mlx_session *session, char ***map);
 /*Memory functions*/
 void	free_map(t_pt	**map);
 void	free_list(char **list);

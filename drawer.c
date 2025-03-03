@@ -50,23 +50,57 @@ int	draw_circle(t_mlx_session *session)
 	return (SUCCESS);
 }
 
-int draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2, int color)
+/**
+ * draw_line - draws a line segement based on two endpoints
+ * @session: mlx session
+ * @x1, y1: Coordinates of a
+ * @x2, y2: Coordinates of b
+ * Return: SUCCESS if it succeeded, or FAIL otherwise
+ */
+void draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2) 
+{ 
+    int m_new = 2 * (y2 - y1); 
+    int slope_error_new = m_new - (x2 - x1); 
+    for (int x = x1, y = y1; x <= x2; x++) { 
+		mlx_put_to_image(session->img, x, y, GREEN);
+  
+        /*Add slope to increment angle formed */
+        slope_error_new += m_new; 
+  
+        /*Slope error reached limit, time to */
+        /*increment y and update slope error. */
+        if (slope_error_new >= 0) { 
+            y++; 
+            slope_error_new -= 2 * (x2 - x1); 
+        } 
+    } 
+} 
+
+
+/**
+ * draw_map_cordinates - Draws Map points based on their given cordinates
+ * @session: Mlx session to draw in
+ * Return: 0 on success or -1 on errors
+ */
+int	draw_map_cordinates(t_mlx_session *session, char ***map)
 {
-	t_pt	a, b, cords;
-	a.x =  x1;
-	b.x =  x2;
-	a.y =  y1;
-	b.y =  y2;
-	for (int i = ft_min(y1, y2); i < ft_max(y1, y2); i++)
+	int	z;
+
+	if (!session || !session->img)
+		return (FAIL);
+	if (!map)
+		return (FAIL);
+	for (int i = 0; map[i]; i++)
 	{
-		for (int j = ft_min(x1, x2); j < ft_max(x1, x2); j++)
+		for (int j = 0; map[i][j]; j++)
 		{
-			cords.x = j;
-			cords.y = i;
-			if (triangle_area(a, b, cords) == 0)
-				mlx_put_to_image(session->img, j, i, color);
+			z = ft_atoi(map[i][j]);
+			int x = (j - z) / sqrt(2);
+			int y = (j + 2 * i + z) / sqrt(6);
+			mlx_put_to_image(session->img, x, y, GREEN);
 		}
 	}
-	return (0);
+	free_double_list(map);
+	return (SUCCESS);
 }
 
