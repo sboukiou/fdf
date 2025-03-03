@@ -15,14 +15,19 @@ void	free_double_list(char ***list)
 	free(list);
 }
 
+void	free_map(t_pt	**map)
+{
+	size_t	idx;
 
-/**
- * ft_min - Returns the min value of two given
- */
-static size_t	ft_min(size_t a, size_t b) {
-	if (a < b)
-		return (a);
-	return (b);
+	if (!map)
+		return ;
+	idx = 0;
+	while (map[idx])
+	{
+		free(map[idx]);
+		idx++;
+	}
+	free(map);
 }
 
 
@@ -47,7 +52,7 @@ void	free_list(char **list)
  * @new_size:  The new requested size
  * Return: New block or NULL if errors occured
  */
-void	*ft_realloc(void *old,size_t old_size, size_t new_size)
+void	*ft_realloc(void *old, size_t old_size, size_t new_size)
 {
 
 	void	*new;

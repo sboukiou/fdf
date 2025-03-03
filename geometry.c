@@ -16,9 +16,9 @@
 	* distance - Calculates distance between two circles
 	* Return: float point of distance (positive value always)
 	*/
-float	distance(t_pt a, t_pt b)
+int	distance(int x1, int y1, int x2, int y2)
 {
-	return (pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+	return (pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 /**
@@ -38,11 +38,21 @@ float	triangle_area(t_pt a, t_pt b, t_pt c)
 }
 
 /**
- * terminate - Ends the program with the corresponding message
- * @code: Error code to display
- */
-void	terminate(char *code)
+	* ft_min - Returns min value of two ints
+	*/
+int	ft_min(int a, int b)
 {
-	ft_printf("%s", code);
-	exit(0);
+	if (a < b)
+		return (a);
+	return (b);
+}
+
+/**
+	* ft_min - Returns min value of two ints
+	*/
+int	ft_max(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
 }

@@ -6,40 +6,38 @@
 /*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 20:03:30 by sboukiou          #+#    #+#             */
-/*   Updated: 2025/02/27 20:32:06 by sboukiou         ###   ########.fr       */
+/*   Updated: 2025/03/02 05:19:16 by sboukiou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-/**
- * terminate - Ends the program with the corresponding message
- * @code: Error code to display
- */
-void	terminate(char *code)
-{
-	write(STDOUT_FILENO, "Faile to establish mlx connection:", 35);
-	write(STDOUT_FILENO, code, ft_strlen(code));
-	write(STDOUT_FILENO, "\n", 1);
-	exit(0);
-}
 
 /**
-	* handle_key - Check if a given key is the escape
-	* @key_code: The number corresponding to the key
-	* @data: Info about the mlx and mlx_window ptrs
-	* @Return: 0 , Or quit berfore if it's ESC
-	*/
-int	handle_key(int key_code, t_mlx_session *mlx_session)
+ * draw_map_cordinates - Draws Map points based on their given cordinates
+ * @session: Mlx session to draw in
+ * Return: 0 on success or -1 on errors
+ */
+int	draw_map_cordinates(t_mlx_session *session, char ***map)
 {
-	if (key_code == ESCAPE)
+	int	z;
+
+	if (!session || !session->img)
+		return (FAIL);
+	if (!map)
+		return (FAIL);
+	for (int i = 0; map[i]; i++)
 	{
-		mlx_destroy_window(mlx_session->mlx, mlx_session->mlx_win);
-		mlx_destroy_display(mlx_session->mlx);
-		free(mlx_session->mlx);
-		exit(0);
+		for (int j = 0; map[i][j]; j++)
+		{
+			z = ft_atoi(map[i][j]);
+			int x = (j - z) / sqrt(2);
+			int y = (j + 2 * i + z) / sqrt(6);
+			mlx_put_to_image(session->img, x, y, GREEN);
+		}
 	}
-	return (0);
+	free_double_list(map);
+	return (SUCCESS);
 }
 
 /**
@@ -48,24 +46,29 @@ int	handle_key(int key_code, t_mlx_session *mlx_session)
 	* @av: given args as array of strings
 	* @Return: 0 on sucess
 	*/
-int	main(void)
+int	main(int ac, char **av)
 {
 	t_mlx_session	mlx_session;
+	t_img_data		img;
+	char			***map;
 
+	map = parser(ac, av);
+	if (!map)
+		return (0);
 	/*Initializing the mlx connection to the X server*/
 	mlx_session.mlx = mlx_init();
 	if (!mlx_session.mlx)
-		terminate(MLX_INIT);
-	/*Creating the window with size + title*/
+		return (ft_printf("[ERROR]: Failed to init mlx session\n"), 0);
 	mlx_session.mlx_win= mlx_new_window(mlx_session.mlx,
 						WINDOW_WIDTH, WINDOW_HEIGHT, "Typical window");
 	if (!mlx_session.mlx_win)
-		terminate(MLX_WINDOW);
-	/*Binding the keyPress with the handle_key function*/
+		return (ft_printf("[ERROR]: Failed to init mlx window\n"), 0);
+	img.img = mlx_new_image(mlx_session.mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
+	mlx_session.img = &img;
+	draw_map_cordinates(&mlx_session, map);
+	mlx_put_image_to_window(mlx_session.mlx, mlx_session.mlx_win, img.img, 0, 0);
 	mlx_hook(mlx_session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &mlx_session);
-	/*mlx_pixel_put(&mlx_session.mlx, &mlx_session.mlx_win, 5, 5, 0xFF0000);*/
-	mlx_loop_hook(mlx_session.mlx, draw_shapes, &mlx_session);
-
 	mlx_loop(mlx_session.mlx);
 	return (0);
 }
