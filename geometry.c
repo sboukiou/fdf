@@ -37,3 +37,22 @@ float	triangle_area(t_pt a, t_pt b, t_pt c)
 	return (0.5 * fabsf(factor_a + factor_b + factor_c));
 }
 
+/**
+	* ft_min - Returns min value of two ints
+	*/
+int	ft_min(int a, int b)
+{
+	if (a < b)
+		return (a);
+	return (b);
+}
+
+/**
+	* ft_min - Returns min value of two ints
+	*/
+int	ft_max(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
