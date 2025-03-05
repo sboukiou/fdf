@@ -15,22 +15,6 @@ void	free_double_list(char ***list)
 	free(list);
 }
 
-void	free_map(t_pt	**map)
-{
-	size_t	idx;
-
-	if (!map)
-		return ;
-	idx = 0;
-	while (map[idx])
-	{
-		free(map[idx]);
-		idx++;
-	}
-	free(map);
-}
-
-
 void	free_list(char **list)
 {
 	int	idx;

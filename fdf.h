@@ -14,10 +14,7 @@
 # define TRUE 1
 # define FALSE 0
 
-/*Defining Macros for events*/
 # define ESCAPE 65307
-# define KEY_PRESS_EVENT 2
-# define KEY_PRESS_MASK 1L<<0
 
 /*Defining Macros for error management*/
 # define MLX_INIT "MLX_INIT"
@@ -76,6 +73,13 @@ typedef struct s_pt
 
 /*Functions prototypes*/
 
+
+/*Memory functions*/
+void	free_double_list(char ***list);
+void	free_list(char **list);
+void	*ft_realloc(void *old, size_t old_size, size_t new_size);
+
+
 /*Geometry Funcs*/
 int	distance(int x1, int y1, int x2, int y2);
 float	triangle_area(t_pt a, t_pt b, t_pt c);
@@ -84,7 +88,7 @@ int	ft_max(int a, int b);
 
 /*Drawing Funcs*/
 int	draw_square(t_mlx_session *session);
-void draw_line(t_mlx_session *session, int x1, int y1, int x2, int y2) ;
+void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1);
 int	draw_circle(t_mlx_session *session);
 int	draw_map_cordinates(t_mlx_session *session, char ***map);
 /*Memory functions*/
@@ -97,6 +101,7 @@ void	free_double_list(char ***list);
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int	handle_key(int key_code, t_mlx_session *mlx_session);
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
+int		quit_mlx_session(t_mlx_session *session);
 
 /*Parser functions*/
 char	***parser(int ac, char **av);

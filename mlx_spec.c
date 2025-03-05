@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "./fdf.h"
+#include <X11/keysym.h>
 /**
 	* handle_key - Check if a given key is the escape
 	* @key_code: The number corresponding to the key
@@ -46,7 +47,15 @@ void	mlx_put_to_image(t_img_data *img, int x, int y, int color)
 	offset = y * img->line_size + x * (img->bits_per_pixel / 8);
 
 	dst = img->addr + offset;
-	*(unsigned int*)dst = color;
+	if (x < WINDOW_WIDTH && y < WINDOW_HEIGHT)
+		*(unsigned int*)dst = color;
 }
 
-
+int		quit_mlx_session(t_mlx_session *session)
+{
+	mlx_destroy_image(session->mlx, session->img->img);
+	mlx_destroy_window(session->mlx, session->mlx_win);
+	mlx_destroy_display(session->mlx);
+	free(session->mlx);
+	exit(0);
+}
