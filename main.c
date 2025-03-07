@@ -14,7 +14,7 @@
 
 # define SUCCESS 0
 # define FAIL -1
-# define MAP_SIZE 7
+# define MAP_SIZE 6
 
 
 char	***check_map(int ac, char **av)
@@ -42,22 +42,16 @@ char	***check_map(int ac, char **av)
 	while ((line_read = read_line(file_des)) != NULL)
 	{
 		map[inc] = ft_split(line_read, " \n");
-		ft_printf("Content is --:> %s\n", map[inc][4]);
-		if (inc > 0 && list_len(map[inc - 1]) != list_len(map[inc]))
+		if (inc > 0 && list_len(map[0]) != list_len(map[inc]))
 		{
 			ft_printf("[ERROR]: Found wrong line length. Exiting.\n");
-			ft_printf("line --> %d -- %d\n\n", inc, list_len(map[inc]));
-			ft_printf("line --> %d -- %d\n\n", inc - 1, list_len(map[inc - 1]));
 			free(line_read);
 			free_double_list(map);
 			exit(1);
 		}
 		inc++;
 		if (inc >= MAP_SIZE && (inc) % MAP_SIZE == 0)
-		{
-			map = (char ***)ft_realloc(map, inc, (inc + MAP_SIZE) * sizeof(char **));
-			ft_printf("reallocing from %d --:> %d\n", inc, inc + MAP_SIZE);
-		}
+			map = (char ***)ft_realloc(map, inc * (sizeof(char **)), (inc + MAP_SIZE) * sizeof(char **));
 		free(line_read);
 	}
 	if (inc == 0)
@@ -80,17 +74,5 @@ char	***check_map(int ac, char **av)
 	*/
 int main(int ac, char **av)
 {
-	char	***map = check_map(ac, av);
-	ft_printf("Allocation succeeded\n");
-	int i = 0;
-	while (map[i])
-	{
-		int	j = 0;
-		while (map[i][j + 1])
-			j++;
-		ft_printf(" %d --:> %s\n", i, map[i][j]);
-		i++;
-	}
-	free_double_list(map);
 	return (0);
 }
