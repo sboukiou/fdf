@@ -44,11 +44,12 @@ void	mlx_put_to_image(t_img_data *img, int x, int y, int color)
 	char	*dst;
 	int		offset;
 
+	if (y >= WIN_HEIGHT || x >= WIN_WIDTH)
+		return ;
 	offset = y * img->line_size + x * (img->bits_per_pixel / 8);
 
 	dst = img->addr + offset;
-	if (x < WINDOW_WIDTH && y < WINDOW_HEIGHT)
-		*(unsigned int*)dst = color;
+	*(unsigned int*)dst = color;
 }
 
 int		quit_mlx_session(t_mlx_session *session)

@@ -30,6 +30,13 @@
 <img height='230' width='400' src='https://miro.medium.com/v2/resize:fit:1100/format:webp/1*ywa_sqeyyAIf7bqY6wieIg.png'>
 <img height='230' width='400' src='https://miro.medium.com/v2/resize:fit:1400/format:webp/1*590KMJC064Z1ioKFSPMEIQ.jpeg'>
 ___
+**To simply do an isometric projection of (x, y, z) --> (x, y)
+We will use this:**
+```
+destination.x = source.x + cos(angle) * source.z
+destination.y = source.y + sin(angle) * source.z
+```
+
 :bulb: *More info of isometric-projection:*\
 \
 **[Isometric projection principals](https://medium.com/gravitdesigner/designers-guide-to-isometric-projection-6bfd66934fc7)**\

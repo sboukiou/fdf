@@ -16,8 +16,8 @@
 # define FAIL -1
 # define ESCAPE 65307
 /*Defining Window demensions*/
-# define WINDOW_HEIGHT 1080
-# define WINDOW_WIDTH 1920
+# define WIN_HEIGHT 1080
+# define WIN_WIDTH 1920
 /*Defining Colors*/
 # define RED 0xFF0000
 # define GREEN 0x00FF00

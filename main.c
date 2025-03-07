@@ -14,7 +14,7 @@
 
 # define SUCCESS 0
 # define FAIL -1
-# define MAP_SIZE 6
+# define MAP_SIZE 1024
 
 
 char	***check_map(int ac, char **av)
@@ -66,6 +66,25 @@ char	***check_map(int ac, char **av)
 	return (map);
 }
 
+void	draw_points_cordinates(t_mlx_session *session, char ***map)
+{
+	int	(i), (j), (proj_x), (proj_y);
+
+	i = 0;
+	while (map[i])
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			proj_x = (j - i) * cos(30 * M_PI / 180);
+			proj_y = (j + i) * sin(30 * M_PI / 180) - atoi(map[i][j]);
+			mlx_put_to_image(session->img, proj_x, proj_y, GREEN);
+			j++;
+		}
+		i++;
+	}
+}
+
 /**
 	* main - Starting point of the program
 	* @ac: Number of given arguments
@@ -74,5 +93,31 @@ char	***check_map(int ac, char **av)
 	*/
 int main(int ac, char **av)
 {
+	char			***map;
+	t_mlx_session	session;
+	t_img_data		img;
+	map = check_map(ac, av);
+	session.mlx = mlx_init();
+	session.mlx_win = NULL;
+	if (!session.mlx)
+	{
+		ft_printf("[ERROR]: Failed to init mlx connection\n");
+		exit(1);
+	}
+	session.mlx_win = mlx_new_window(session.mlx, WIN_WIDTH, WIN_HEIGHT, "Mlx_window");
+	if (!session.mlx_win)
+	{
+		ft_printf("[ERROR]: Failed to creat mlx window\n");
+		exit(1);
+	}
+	img.img = mlx_new_image(session.mlx, WIN_WIDTH, WIN_HEIGHT);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
+	session.img = &img;
+	/*mlx_put_to_image(session.img, 100, 100, RED);*/
+	draw_points_cordinates(&session, map);
+	mlx_put_image_to_window(session.mlx, session.mlx_win, session.img->img, 0, 0);
+	free_double_list(map);
+	mlx_hook(session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &session);
+	mlx_loop(session.mlx);
 	return (0);
 }
