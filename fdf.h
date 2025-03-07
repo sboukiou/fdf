@@ -1,8 +1,8 @@
 #ifndef FDF_H
 # define FDF_H
 
-# include <mlx.h>
 #include <stdlib.h>
+#include <mlx.h>
 #include <unistd.h>
 #include <math.h>
 #include <fcntl.h>
