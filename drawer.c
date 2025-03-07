@@ -30,7 +30,6 @@ void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1)
 
     while (1) {
         // Draw the pixel
-        mlx_put_to_image(session->img, x0, y0, 0xFFFFFF);  // White color for example
 
         // If we've reached the destination point, stop
         if (x0 == x1 && y0 == y1) break;
@@ -44,6 +43,7 @@ void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1)
             err += dx;
             y0 += sy;
         }
+        mlx_put_to_image(session->img, x0, y0, RED);  // White color for example
 	}
 }
 /**
@@ -91,6 +91,21 @@ int draw_map_cordinates(t_mlx_session *session, char ***map)
 				mlx_put_to_image(session->img, x_screen, y_screen, GREEN);
 			else
 				mlx_put_to_image(session->img, x_screen, y_screen, 0xFFFFFF);
+			int z_down, z_right;
+			if (map[i + 1])
+				z_down = atoi(map[i + 1][j]);
+			else
+				z_down = 0;
+			if (map[i][j + 1])
+				z_right = atoi(map[i][j + 1]);
+			else
+				z_right = 0;
+			int x_down = (int)(((j - i - 1) * cos(angle)) * scale_factor) + center_x;
+			int y_down = (int)(((j + i + 1) * sin(angle) - z_down) * scale_factor) + center_y;
+			int x_right = (int)(((j + 1 - i) * cos(angle)) * scale_factor) + center_x;
+			int y_right = (int)(((j + i + 1) * sin(angle) - z_right) * scale_factor) + center_y;
+			draw_line(session, x_screen, y_screen, x_right, y_right);
+			draw_line(session, x_screen, y_screen, x_down, y_down);
 		}
     }
     free_double_list(map);

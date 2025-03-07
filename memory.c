@@ -1,4 +1,18 @@
 #include "fdf.h"
+
+void	free_list(char **list)
+{
+	int	idx;
+
+	idx = 0;
+	while (list[idx])
+	{
+		free(list[idx]);
+		list[idx] = NULL;
+		idx++;
+	}
+	free(list);
+}
 void	free_double_list(char ***list)
 {
 	int	i;
@@ -15,19 +29,6 @@ void	free_double_list(char ***list)
 	free(list);
 }
 
-void	free_list(char **list)
-{
-	int	idx;
-
-	idx = 0;
-	while (list[idx])
-	{
-		free(list[idx]);
-		list[idx] = NULL;
-		idx++;
-	}
-	free(list);
-}
 
 /**
  * ft_realloc - Mimics the behavior of realloc

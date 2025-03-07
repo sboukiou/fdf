@@ -13,26 +13,21 @@
 
 # define TRUE 1
 # define FALSE 0
-
-# define ESCAPE 65307
-
-/*Defining Macros for error management*/
-# define MLX_INIT "MLX_INIT"
-# define MLX_WINDOW "MLX_WINDOW"
-
 # define FAIL -1
-# define SUCCESS 0
-
+# define ESCAPE 65307
 /*Defining Window demensions*/
 # define WINDOW_HEIGHT 1080
 # define WINDOW_WIDTH 1920
-
 /*Defining Colors*/
 # define RED 0xFF0000
 # define GREEN 0x00FF00
 # define BLUE 0xFF00FF
-
-#define SCALE 30
+/*Defining Macros for events*/
+# define KEY_PRESS_EVENT 2
+# define BTN_PRESS_EVENT 4
+# define DESTROY_NOTIFY_EVENT 17
+# define KEY_PRESS_MASK 1L<<0
+# define BTN_PRESS_MASK 1L<<2
 /**
  * s_img_data - Data about the image
  * to be pushed to the window
@@ -58,53 +53,24 @@ typedef struct s_mxl_session
 }	t_mlx_session;
 
 
-/**
-	* s_pt - struct holding points cordinations
-*/
-typedef struct s_pt
-{
-	int	x;
-	int	y;
-	int	z;
-	int	color;
-	int	line_len;
-}	t_pt;
+/*Counter functions*/
+size_t	list_len(char **list);
+size_t	map_len(char ***map);
 
-
-/*Functions prototypes*/
-
-
-/*Memory functions*/
-void	free_double_list(char ***list);
-void	free_list(char **list);
-void	*ft_realloc(void *old, size_t old_size, size_t new_size);
-
-
-/*Geometry Funcs*/
-int	distance(int x1, int y1, int x2, int y2);
-float	triangle_area(t_pt a, t_pt b, t_pt c);
+/*Math functions*/
 int	ft_min(int a, int b);
 int	ft_max(int a, int b);
 
-/*Drawing Funcs*/
-int	draw_square(t_mlx_session *session);
-void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1);
-int	draw_circle(t_mlx_session *session);
-int	draw_map_cordinates(t_mlx_session *session, char ***map);
-/*Memory functions*/
-void	free_map(t_pt	**map);
+/*Memory handling functions*/
 void	free_list(char **list);
-void	*ft_realloc(void *old, size_t old_size, size_t new_size);
 void	free_double_list(char ***list);
+void	*ft_realloc(void *old, size_t old_size, size_t new_size);
 
-/*Mlx spec funcs*/
+/*Files reading functions*/
+char *read_line(int fd);
+
+/*Mlx costum functions*/
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int	handle_key(int key_code, t_mlx_session *mlx_session);
-void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
-int		quit_mlx_session(t_mlx_session *session);
-
-/*Parser functions*/
-char	***parser(int ac, char **av);
 
 #endif
-

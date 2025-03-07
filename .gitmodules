@@ -1,3 +1,0 @@
-[submodule "dependencies/get_next_line"]
-	path = dependencies/get_next_line
-	url = git@github.com:sboukiou/get_next_line.git
