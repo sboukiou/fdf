@@ -6,46 +6,11 @@
 /*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 01:25:35 by sboukiou          #+#    #+#             */
-/*   Updated: 2025/03/02 05:25:18 by sboukiou         ###   ########.fr       */
+/*   Updated: 2025/03/08 20:51:59 by sboukiou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fdf.h"
-
-/**
- * draw_line - draws a line segement based on two endpoints
- * @session: mlx session
- * @x1, y1: Coordinates of a
- * @x2, y2: Coordinates of b
- * Return: SUCCESS if it succeeded, or FAIL otherwise
- */
-
-void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1)
-{
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx = (x0 < x1) ? 1 : -1;
-    int sy = (y0 < y1) ? 1 : -1;
-    int err = dx - dy;
-
-    while (1) {
-        // Draw the pixel
-
-        // If we've reached the destination point, stop
-        if (x0 == x1 && y0 == y1) break;
-
-        int e2 = err * 2;
-        if (e2 > -dy) {
-            err -= dy;
-            x0 += sx;
-        }
-        if (e2 < dx) {
-            err += dx;
-            y0 += sy;
-        }
-        mlx_put_to_image(session->img, x0, y0, RED);  // White color for example
-	}
-}
 
 static int	get_color(char *str)
 {
@@ -118,6 +83,48 @@ static void	draw_point(t_mlx_session *session, int x, int y, char *details, floa
 	mlx_put_to_image(session->img, cord_x, cord_y, color);
 }
 
+/**
+ * draw_line - draws a line segement based on two endpoints
+ * @session: mlx session
+ * @x1, y1: Coordinates of a
+ * @x2, y2: Coordinates of b
+ * Return: SUCCESS if it succeeded, or FAIL otherwise
+ */
+
+void draw_line(t_mlx_session *session, int x0, int y0, char *z0, int x1, int y1, char *z1,int scale)
+{
+	int	proj_x0 = x0, proj_y0 = y0;
+	int	proj_x1 = x1, proj_y1 = y1;
+
+	iso_project(&proj_x0, &proj_y0, atoi(z0), scale);
+	iso_project(&proj_x1, &proj_y1, atoi(z1), scale);
+    int dx = abs(proj_x1 - proj_x0);
+    int dy = abs(proj_y1 - proj_y0);
+    int sx = (proj_x0 < proj_x1) ? 1 : -1;
+    int sy = (proj_y0 < proj_y1) ? 1 : -1;
+    int err = dx - dy;
+
+    while (1) {
+        // Draw the pixel
+
+        // If we've reached the destination point, stop
+        if (proj_x0 == proj_x1 && proj_y0 == proj_y1) break;
+
+        int e2 = err * 2;
+        if (e2 > -dy) {
+            err -= dy;
+            proj_x0 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            proj_y0 += sy;
+        }
+		ft_printf("put img line at %d %d\n", abs(proj_x0), abs(proj_y0), RED);
+		(void)session;
+        mlx_put_to_image(session->img, abs(proj_x0 + WIN_WIDTH / 2), fabs(proj_y0 + WIN_HEIGHT / 3.4), RED);  // White color for example
+	}
+}
+
 void	draw_shape(t_mlx_session *session, char ***map)
 {
 	int	(i), (j);
@@ -130,6 +137,10 @@ void	draw_shape(t_mlx_session *session, char ***map)
 		while (map[i][j])
 		{
 			draw_point(session, j, i, map[i][j], scale);
+			if (map[i + 1])
+				draw_line(session, j, i + 1, map[i + 1][j], j, i, map[i][j], scale);
+			if (map[i][j + 1])
+				draw_line(session, j + 1, i, map[i][j + 1], j, i, map[i][j], scale);
 			j++;
 		}
 		i++;
