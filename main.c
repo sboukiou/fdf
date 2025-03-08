@@ -97,7 +97,6 @@ int main(int ac, char **av)
 	img.img = mlx_new_image(session.mlx, WIN_WIDTH, WIN_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
 	session.img = &img;
-	/*draw_shape(session, map);*/
 	draw_shape(&session, map);
 	mlx_put_image_to_window(session.mlx, session.mlx_win, session.img->img, 0, 0);
 	free_double_list(map);

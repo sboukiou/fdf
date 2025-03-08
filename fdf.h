@@ -54,6 +54,21 @@ typedef struct s_mxl_session
 	t_img_data *img;
 }	t_mlx_session;
 
+typedef struct s_point
+{
+	int	x;
+	int	y;
+	int	z;
+	int	color;
+}	t_point;
+
+typedef struct s_mapinfo
+{
+	char	***map;
+	size_t	height;
+	size_t	max_width;
+	size_t	min_widht;
+}	t_mapinfo;
 
 /*Counter functions*/
 size_t	list_len(char **list);
