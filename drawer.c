@@ -12,7 +12,7 @@
 
 #include "./fdf.h"
 
-static int	get_color(char *str)
+int	get_color(char *str)
 {
 	if (!str)
 		return (WHITE);
@@ -58,14 +58,14 @@ static float	get_scale(char ***map)
 				max_y = proj_y;
 		}
 	}
-	scale_x = (WIN_WIDTH * 0.70) / (max_x - min_x);
-	scale_y = (WIN_HEIGHT * 0.70) / (max_y - min_y);
+	scale_x = (WIN_WIDTH * 0.60) / (max_x - min_x);
+	scale_y = (WIN_HEIGHT * 0.60) / (max_y - min_y);
 	if (scale_x > scale_y)
 		return (scale_y);
 	return (scale_x);
 }
 
-static void	draw_point(t_mlx_session *session, int x, int y, char *details, float scale)
+void	draw_point(t_mlx_session *session, int x, int y, char *details, float scale)
 {
 	char	(**items);
 	int		(z), (color), (cord_x), (cord_y);
@@ -78,7 +78,7 @@ static void	draw_point(t_mlx_session *session, int x, int y, char *details, floa
 	cord_y = y;
 	iso_project(&cord_x, &cord_y, z, scale);
 	cord_x = abs(cord_x + WIN_WIDTH / 2);
-	cord_y = fabs(cord_y + WIN_HEIGHT / 3.4);
+	cord_y = abs(cord_y + WIN_HEIGHT / 2);
 	ft_printf("put img at %d %d\n", cord_x, cord_y);
 	mlx_put_to_image(session->img, cord_x, cord_y, color);
 }
@@ -95,6 +95,7 @@ void draw_line(t_mlx_session *session, int x0, int y0, char *z0, int x1, int y1,
 {
 	int	proj_x0 = x0, proj_y0 = y0;
 	int	proj_x1 = x1, proj_y1 = y1;
+	int	color = RED;
 
 	iso_project(&proj_x0, &proj_y0, atoi(z0), scale);
 	iso_project(&proj_x1, &proj_y1, atoi(z1), scale);
@@ -119,9 +120,8 @@ void draw_line(t_mlx_session *session, int x0, int y0, char *z0, int x1, int y1,
             err += dx;
             proj_y0 += sy;
         }
-		ft_printf("put img line at %d %d\n", abs(proj_x0), abs(proj_y0), RED);
-		(void)session;
-        mlx_put_to_image(session->img, abs(proj_x0 + WIN_WIDTH / 2), fabs(proj_y0 + WIN_HEIGHT / 3.4), RED);  // White color for example
+        mlx_put_to_image(session->img, abs(proj_x0 + WIN_WIDTH / 2), abs(proj_y0 + WIN_HEIGHT / 3), color);
+		color--;
 	}
 }
 
@@ -136,7 +136,7 @@ void	draw_shape(t_mlx_session *session, char ***map)
 		j = 0;
 		while (map[i][j])
 		{
-			draw_point(session, j, i, map[i][j], scale);
+			/*draw_point(session, j, i, map[i][j], scale);*/
 			if (map[i + 1])
 				draw_line(session, j, i + 1, map[i + 1][j], j, i, map[i][j], scale);
 			if (map[i][j + 1])
