@@ -5,6 +5,7 @@
 #include <mlx.h>
 #include <unistd.h>
 #include <math.h>
+#include <limits.h>
 #include <fcntl.h>
 
 /*Including Dependencies headers*/
@@ -20,6 +21,7 @@
 # define WIN_WIDTH 1920
 /*Defining Colors*/
 # define RED 0xFF0000
+# define WHITE 0xFFFFFF
 # define GREEN 0x00FF00
 # define BLUE 0xFF00FF
 /*Defining Macros for events*/
@@ -72,5 +74,8 @@ char *read_line(int fd);
 /*Mlx costum functions*/
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int	handle_key(int key_code, t_mlx_session *mlx_session);
+
+/*Drawing functions*/
+void	draw_shape(t_mlx_session *session, char ***map);
 
 #endif

@@ -21,6 +21,7 @@ char	***check_map(int ac, char **av)
 {
 	int		(file_des), (inc);
 	char	(*line_read), (***map);
+	size_t	line_len;
 
 	if (ac != 2)
 	{
@@ -42,7 +43,9 @@ char	***check_map(int ac, char **av)
 	while ((line_read = read_line(file_des)) != NULL)
 	{
 		map[inc] = ft_split(line_read, " \n");
-		if (inc > 0 && list_len(map[0]) != list_len(map[inc]))
+		if (inc == 0)
+			line_len = list_len(map[inc]);
+		if (list_len(map[inc]) < line_len)
 		{
 			ft_printf("[ERROR]: Found wrong line length. Exiting.\n");
 			free(line_read);
@@ -64,25 +67,6 @@ char	***check_map(int ac, char **av)
 	map[inc] = NULL;
 	close(file_des);
 	return (map);
-}
-
-void	draw_points_cordinates(t_mlx_session *session, char ***map)
-{
-	int	(i), (j), (proj_x), (proj_y);
-
-	i = 0;
-	while (map[i])
-	{
-		j = 0;
-		while (map[i][j])
-		{
-			proj_x = (j - i) * cos(30 * M_PI / 180);
-			proj_y = (j + i) * sin(30 * M_PI / 180) - atoi(map[i][j]);
-			mlx_put_to_image(session->img, proj_x, proj_y, GREEN);
-			j++;
-		}
-		i++;
-	}
 }
 
 /**
@@ -113,8 +97,8 @@ int main(int ac, char **av)
 	img.img = mlx_new_image(session.mlx, WIN_WIDTH, WIN_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
 	session.img = &img;
-	/*mlx_put_to_image(session.img, 100, 100, RED);*/
-	draw_points_cordinates(&session, map);
+	/*draw_shape(session, map);*/
+	draw_shape(&session, map);
 	mlx_put_image_to_window(session.mlx, session.mlx_win, session.img->img, 0, 0);
 	free_double_list(map);
 	mlx_hook(session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &session);
