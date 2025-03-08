@@ -46,68 +46,92 @@ void draw_line(t_mlx_session *session, int x0, int y0, int x1, int y1)
         mlx_put_to_image(session->img, x0, y0, RED);  // White color for example
 	}
 }
-/**
- * draw_map_cordinates - Draws Map points based on their given cordinates
- * @session: Mlx session to draw in
- * Return: 0 on success or -1 on errors
- */
-int draw_map_cordinates(t_mlx_session *session, char ***map)
+
+static int	get_color(char *str)
 {
-    int z;
-    float angle;
-	int	scale_factor;
-	int center_x;
-	int center_y;
-	int x;
-	int y;
-	int	x_scaled;
-	int	y_scaled;
-	int	x_screen;
-	int	y_screen;
+	if (!str)
+		return (WHITE);
+	return (WHITE);
+}
 
-	if (!session || !session->img)
-		return (FAIL);
-	if (!map)
-		return (FAIL);
+static void	iso_project(int *x, int *y, int z, float scale)
+{
+	int	(pos_x), (pos_y);
+	float	(angle);
+
 	angle = M_PI / 6;
-    // Scaling factor for bigger drawing
-    scale_factor = 1;
+	pos_x = (*x - *y) * cos(angle) * scale;
+	pos_y = (*x + *y) * sin(angle) * scale - fabsf(z  * scale);
+	*x = pos_x;
+	*y = pos_y;
+}
 
-    center_x = WINDOW_WIDTH / 2;
-    center_y = WINDOW_HEIGHT / 4;
+static float	get_scale(char ***map)
+{
+	int	(proj_x), (min_x), (max_x);
+	int	(proj_y), (min_y), (max_y);
+	float	(scale_x), (scale_y);
 
-    for (int i = 0; map[i]; i++)
-    {
-        for (int j = 0; map[i][j]; j++)
+	min_x = INT_MAX;
+	min_y = INT_MAX;
+	max_x = INT_MIN;
+	max_y = INT_MIN;
+	for (int i = 0; map[i]; i++)
+	{
+		for (int j = 0; map[i][j]; j++)
 		{
-			z = atoi(map[i][j]);
-			x = (j - i) * cos(angle); 
-			y = (i + j) * sin(angle) - z;
-			x_scaled = (int)(x * scale_factor);
-			y_scaled = (int)(y * scale_factor);
-			x_screen = x_scaled + center_x;
-			y_screen = y_scaled + center_y;
-			if (z)
-				mlx_put_to_image(session->img, x_screen, y_screen, GREEN);
-			else
-				mlx_put_to_image(session->img, x_screen, y_screen, 0xFFFFFF);
-			int z_down, z_right;
-			if (map[i + 1])
-				z_down = atoi(map[i + 1][j]);
-			else
-				z_down = 0;
-			if (map[i][j + 1])
-				z_right = atoi(map[i][j + 1]);
-			else
-				z_right = 0;
-			int x_down = (int)(((j - i - 1) * cos(angle)) * scale_factor) + center_x;
-			int y_down = (int)(((j + i + 1) * sin(angle) - z_down) * scale_factor) + center_y;
-			int x_right = (int)(((j + 1 - i) * cos(angle)) * scale_factor) + center_x;
-			int y_right = (int)(((j + i + 1) * sin(angle) - z_right) * scale_factor) + center_y;
-			draw_line(session, x_screen, y_screen, x_right, y_right);
-			draw_line(session, x_screen, y_screen, x_down, y_down);
+			proj_x = j;
+			proj_y = i;
+			iso_project(&proj_x, &proj_y, atoi(map[i][j]), 1);
+			if (min_x > proj_x)
+				min_x = proj_x;
+			if (min_y > proj_y)
+				min_y = proj_y;
+			if (max_x < proj_x)
+				max_x = proj_x;
+			if (max_y < proj_y)
+				max_y = proj_y;
 		}
-    }
-    free_double_list(map);
-    return (SUCCESS);
+	}
+	scale_x = (WIN_WIDTH * 0.70) / (max_x - min_x);
+	scale_y = (WIN_HEIGHT * 0.70) / (max_y - min_y);
+	if (scale_x > scale_y)
+		return (scale_y);
+	return (scale_x);
+}
+
+static void	draw_point(t_mlx_session *session, int x, int y, char *details, float scale)
+{
+	char	(**items);
+	int		(z), (color), (cord_x), (cord_y);
+
+	items = ft_split(details, ",");
+	z = ft_atoi(items[0]);
+	color = get_color(items[1]);
+	free_list(items);
+	cord_x = x;
+	cord_y = y;
+	iso_project(&cord_x, &cord_y, z, scale);
+	cord_x = abs(cord_x + WIN_WIDTH / 2);
+	cord_y = fabs(cord_y + WIN_HEIGHT / 3.4);
+	ft_printf("put img at %d %d\n", cord_x, cord_y);
+	mlx_put_to_image(session->img, cord_x, cord_y, color);
+}
+
+void	draw_shape(t_mlx_session *session, char ***map)
+{
+	int	(i), (j);
+	float	(scale);
+	i = 0;
+	scale = get_scale(map);
+	while (map[i])
+	{
+		j = 0;
+		while (map[i][j])
+		{
+			draw_point(session, j, i, map[i][j], scale);
+			j++;
+		}
+		i++;
+	}
 }
