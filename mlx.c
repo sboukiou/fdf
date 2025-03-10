@@ -26,8 +26,27 @@ int	handle_key(int key_code, t_mlx_session *mlx_session)
 		mlx_destroy_window(mlx_session->mlx, mlx_session->mlx_win);
 		mlx_destroy_display(mlx_session->mlx);
 		free(mlx_session->mlx);
+		free(mlx_session->mapinfo.map);
 		exit(0);
 	}
+	if (key_code == XK_Up)
+		mlx_session->moves.up += 15;
+	if (key_code == XK_Left)
+		mlx_session->moves.left += 15;
+	if (key_code == XK_Down)
+		mlx_session->moves.down += 15;
+	if (key_code == XK_Right)
+		mlx_session->moves.right += 15;
+	if (key_code == XK_i)
+		mlx_session->moves.zoom_in += 1;
+	if (key_code == XK_o)
+		mlx_session->moves.zoom_out += 1;
+
+	ft_printf("Drawing compeleted\n");
+	mlx_destroy_image(mlx_session->mlx, mlx_session->img->img);
+	mlx_session->img->img = mlx_new_image(mlx_session->mlx, WIN_WIDTH, WIN_HEIGHT);
+	draw_shape(mlx_session, mlx_session->mapinfo);
+	mlx_put_image_to_window(mlx_session->mlx, mlx_session->mlx_win, mlx_session->img->img, 0, 0);
 	return (0);
 }
 

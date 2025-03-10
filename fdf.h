@@ -54,17 +54,6 @@ typedef struct s_parameters
 	int	min_height;
 }	t_parameters;
 
-/**
-	* s_mlx_session - struct holding addresses
-	* of mlx session, window
-*/
-typedef struct s_mxl_session
-{
-	void	*mlx;
-	void	*mlx_win;
-	t_img_data *img;
-}	t_mlx_session;
-
 typedef struct s_point
 {
 	int		x;
@@ -81,6 +70,29 @@ typedef struct s_mapinfo
 	t_parameters	params;
 }	t_mapinfo;
 
+typedef struct s_moves
+{
+	int	up;
+	int	down;
+	int	left;
+	int	right;
+	int	zoom_in;
+	int	zoom_out;
+}	t_moves;
+
+/**
+	* s_mlx_session - struct holding addresses
+	* of mlx session, window
+*/
+typedef struct s_mxl_session
+{
+	void	*mlx;
+	void	*mlx_win;
+	t_img_data *img;
+	t_moves	moves;
+	t_mapinfo mapinfo;
+}	t_mlx_session;
+
 /*Counter functions*/
 size_t	list_len(char **list);
 size_t	map_len(char ***map);
@@ -91,6 +103,7 @@ int	ft_max(int a, int b);
 int	ft_ishex(char c);
 int	handle_hex_lower(char *str);
 int	handle_hex_upper(char *str);
+float	triangle_area(t_point a, t_point b, t_point extra);
 
 /*Memory handling functions*/
 void	free_list(char **list);

@@ -42,7 +42,7 @@ static void	iso_project(int *x, int *y, int z, float scale)
 	*y = pos_y;
 }
 
-static t_parameters	get_parameters(char ***map)
+static t_parameters	get_parameters(t_mlx_session *session)
 {
 	float	(scale_x), (scale_y);
 	t_point	(projection);
@@ -53,13 +53,13 @@ static t_parameters	get_parameters(char ***map)
 	params.min_height = INT_MAX;
 	params.max_width = INT_MIN;
 	params.max_height = INT_MIN;
-	for (int i = 0; map[i]; i++)
+	for (int i = 0; session->mapinfo.map[i]; i++)
 	{
-		for (int j = 0; map[i][j]; j++)
+		for (int j = 0; session->mapinfo.map[i][j]; j++)
 		{
 			projection.x = j;
 			projection.y = i;
-			iso_project(&projection.x, &projection.y, atoi(map[i][j]), 1);
+			iso_project(&projection.x, &projection.y, atoi(session->mapinfo.map[i][j]), 1);
 			if (params.min_width > projection.x)
 				params.min_width = projection.x;
 			if (params.min_height > projection.y)
@@ -73,13 +73,14 @@ static t_parameters	get_parameters(char ***map)
 	scale_x = (WIN_WIDTH * 0.60) / (params.max_width - params.min_width);
 	scale_y = (WIN_HEIGHT * 0.60) / (params.max_height - params.min_height);
 	if (scale_x > scale_y)
-		params.scale = scale_y;
+		params.scale = scale_y + session->moves.zoom_in - session->moves.zoom_out;
 	else
 		params.scale = scale_x;
 	center.x = (params.max_width - params.min_width);
 	center.y = (params.max_height - params.min_height);
-	params.offset_x = (WIN_WIDTH) / 4 + center.x;
-	params.offset_y = (WIN_HEIGHT) / 4 + center.y;
+	(void)center;
+	params.offset_x = (WIN_WIDTH) / 2 + session->moves.right - session->moves.left;
+	params.offset_y = (WIN_HEIGHT) / 2 + session->moves.down - session->moves.up;
 	return (params);
 }
 
@@ -94,6 +95,8 @@ static t_parameters	get_parameters(char ***map)
 static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_parameters params)
 {
 	char	**items;
+	int	(dx), (dy), (final_y), (final_x);
+	int	(d_param), (y_cord), (direction_y);
 
 	items = ft_split(origin.values, ",");
 	origin.z = atoi(items[0]);
@@ -107,34 +110,44 @@ static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_par
 
 	iso_project(&origin.x, &origin.y, origin.z, params.scale);
 	iso_project(&dest.x, &dest.y, dest.z, params.scale);
-    int dx = abs(dest.x - origin.x);
-    int dy = abs(dest.y - origin.y);
-   int sx = (origin.x < dest.x) ? 1 : -1;
-    int sy = (origin.y < dest.y) ? 1 : -1;
-    int err = dx - dy;
-
-    while (1) {
-        // Draw the pixel
-
-        // If we've reached the destination point, stop
-        if (origin.x == dest.x && origin.y == dest.y) break;
-
-        int e2 = err * 2;
-        if (e2 > -dy) {
-            err -= dy;
-            origin.x += sx;
-        }
-        if (e2 < dx) {
-            err += dx;
-            origin.y += sy;
-        }
-        mlx_put_to_image(session->img, abs(origin.x + params.offset_x), abs(origin.y + params.offset_y), origin.color);
-		if (origin.color < dest.color)
-			origin.color--;
-		else if (origin.color > dest.color)
-			origin.color++;
+	dx = origin.x - dest.x;
+	dy = origin.y - dest.y;
+	if (dy < 0)
+		direction_y = -1;
+	else
+		direction_y = 1;
+	if (origin.x > dest.x)
+	{
+		int temp;
+		temp = origin.x;
+		origin.x = dest.x;
+		dest.x = temp;
+		temp = origin.y;
+		origin.y = dest.y;
+		dest.y = temp;
 	}
+	if (dx != 0)
+	{
+		y_cord = origin.y;
+		d_param = 2 * dy - dx;
+		for (int i = 0; i <= dx + 1; i++)
+		{
+			final_x = origin.x + i + params.offset_x;
+			final_y = origin.y + i + params.offset_y;
+
+			if (final_x > 0 && final_y > 0)
+				mlx_put_to_image(session->img, final_x, final_y, WHITE);
+			if (d_param >= 0)
+			{
+				y_cord += direction_y;
+				d_param = d_param - 2 * dx;
+			}
+			d_param = d_param + 2 * dy;
+		}
+	}
+
 }
+
 
 void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo)
 {
@@ -142,8 +155,9 @@ void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo)
 	t_point			origin;
 	t_point			point_b;
 	t_point			point_a;
+	ft_printf("Called \n");
 	i = 0;
-	mapinfo.params = get_parameters(mapinfo.map);
+	mapinfo.params = get_parameters(session);
 	while (mapinfo.map[i])
 	{
 		j = 0;

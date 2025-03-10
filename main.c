@@ -84,6 +84,12 @@ int main(int ac, char **av)
 	mapinfo = check_map(ac, av);
 	session.mlx = mlx_init();
 	session.mlx_win = NULL;
+	session.moves.up = 0;
+	session.moves.down = 0;
+	session.moves.left = 0;
+	session.moves.right = 0;
+	session.moves.zoom_in = 0;
+	session.moves.zoom_out = 0;
 	if (!session.mlx)
 	{
 		ft_printf("[ERROR]: Failed to init mlx connection\n");
@@ -98,9 +104,9 @@ int main(int ac, char **av)
 	img.img = mlx_new_image(session.mlx, WIN_WIDTH, WIN_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
 	session.img = &img;
+	session.mapinfo = mapinfo;
 	draw_shape(&session, mapinfo);
 	mlx_put_image_to_window(session.mlx, session.mlx_win, session.img->img, 0, 0);
-	free_double_list(mapinfo.map);
 	mlx_hook(session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &session);
 	mlx_loop(session.mlx);
 	return (0);

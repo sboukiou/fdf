@@ -121,3 +121,15 @@ int	handle_hex_upper(char *str)
 	}
 	return (color);
 }
+
+float	triangle_area(t_point a, t_point b, t_point extra)
+{
+	int	factor_1;
+	int	factor_2;
+	int	factor_3;
+
+	factor_1 = (b.y - extra.y) * a.x;
+	factor_2 = (extra.y - a.y) * b.x;
+	factor_3 = (a.y - b.y) * extra.x;
+	return (0.5 * (factor_1 + factor_2 + factor_3));
+}
