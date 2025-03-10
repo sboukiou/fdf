@@ -43,6 +43,17 @@ typedef struct	s_img_data {
 }				t_img_data;
 
 
+typedef struct s_parameters
+{
+	float	scale;
+	int		offset_x;
+	int		offset_y;
+	int	max_width;
+	int	min_width;
+	int	max_height;
+	int	min_height;
+}	t_parameters;
+
 /**
 	* s_mlx_session - struct holding addresses
 	* of mlx session, window
@@ -56,18 +67,18 @@ typedef struct s_mxl_session
 
 typedef struct s_point
 {
-	int	x;
-	int	y;
-	int	z;
-	int	color;
+	int		x;
+	int		y;
+	int		z;
+	char	*values;
+	int		color;
 }	t_point;
 
 typedef struct s_mapinfo
 {
-	char	***map;
-	size_t	height;
-	size_t	max_width;
-	size_t	min_widht;
+	char			***map;
+	size_t			height;
+	t_parameters	params;
 }	t_mapinfo;
 
 /*Counter functions*/
@@ -77,6 +88,9 @@ size_t	map_len(char ***map);
 /*Math functions*/
 int	ft_min(int a, int b);
 int	ft_max(int a, int b);
+int	ft_ishex(char c);
+int	handle_hex_lower(char *str);
+int	handle_hex_upper(char *str);
 
 /*Memory handling functions*/
 void	free_list(char **list);
@@ -91,6 +105,6 @@ void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int	handle_key(int key_code, t_mlx_session *mlx_session);
 
 /*Drawing functions*/
-void	draw_shape(t_mlx_session *session, char ***map);
+void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo);
 
 #endif
