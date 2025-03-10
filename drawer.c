@@ -14,9 +14,20 @@
 
 int	get_color(char *str)
 {
+	int	color;
+
+	color = WHITE;
 	if (!str)
-		return (WHITE);
-	return (WHITE);
+		return (color);
+	if (ft_strlen(str) < 3)
+		return (color);
+	if (str[0] != '0' || (str[1] != 'x' && str[1] != 'X'))
+		return (color);
+	if (str[1] == 'x')
+		color = handle_hex_lower(str);
+	else if (str[1] == 'X')
+		color = handle_hex_upper(str);
+	return (color);
 }
 
 static void	iso_project(int *x, int *y, int z, float scale)
@@ -31,56 +42,45 @@ static void	iso_project(int *x, int *y, int z, float scale)
 	*y = pos_y;
 }
 
-static float	get_scale(char ***map)
+static t_parameters	get_parameters(char ***map)
 {
-	int	(proj_x), (min_x), (max_x);
-	int	(proj_y), (min_y), (max_y);
 	float	(scale_x), (scale_y);
+	t_point	(projection);
+	t_point	(center);
+	t_parameters	params;
 
-	min_x = INT_MAX;
-	min_y = INT_MAX;
-	max_x = INT_MIN;
-	max_y = INT_MIN;
+	params.min_width = INT_MAX;
+	params.min_height = INT_MAX;
+	params.max_width = INT_MIN;
+	params.max_height = INT_MIN;
 	for (int i = 0; map[i]; i++)
 	{
 		for (int j = 0; map[i][j]; j++)
 		{
-			proj_x = j;
-			proj_y = i;
-			iso_project(&proj_x, &proj_y, atoi(map[i][j]), 1);
-			if (min_x > proj_x)
-				min_x = proj_x;
-			if (min_y > proj_y)
-				min_y = proj_y;
-			if (max_x < proj_x)
-				max_x = proj_x;
-			if (max_y < proj_y)
-				max_y = proj_y;
+			projection.x = j;
+			projection.y = i;
+			iso_project(&projection.x, &projection.y, atoi(map[i][j]), 1);
+			if (params.min_width > projection.x)
+				params.min_width = projection.x;
+			if (params.min_height > projection.y)
+				params.min_height = projection.y;
+			if (params.max_width < projection.x)
+				params.max_width = projection.x;
+			if (params.max_height < projection.y)
+				params.max_height = projection.y;
 		}
 	}
-	scale_x = (WIN_WIDTH * 0.60) / (max_x - min_x);
-	scale_y = (WIN_HEIGHT * 0.60) / (max_y - min_y);
+	scale_x = (WIN_WIDTH * 0.60) / (params.max_width - params.min_width);
+	scale_y = (WIN_HEIGHT * 0.60) / (params.max_height - params.min_height);
 	if (scale_x > scale_y)
-		return (scale_y);
-	return (scale_x);
-}
-
-void	draw_point(t_mlx_session *session, int x, int y, char *details, float scale)
-{
-	char	(**items);
-	int		(z), (color), (cord_x), (cord_y);
-
-	items = ft_split(details, ",");
-	z = ft_atoi(items[0]);
-	color = get_color(items[1]);
-	free_list(items);
-	cord_x = x;
-	cord_y = y;
-	iso_project(&cord_x, &cord_y, z, scale);
-	cord_x = abs(cord_x + WIN_WIDTH / 2);
-	cord_y = abs(cord_y + WIN_HEIGHT / 2);
-	ft_printf("put img at %d %d\n", cord_x, cord_y);
-	mlx_put_to_image(session->img, cord_x, cord_y, color);
+		params.scale = scale_y;
+	else
+		params.scale = scale_x;
+	center.x = (params.max_width - params.min_width);
+	center.y = (params.max_height - params.min_height);
+	params.offset_x = (WIN_WIDTH) / 4 + center.x;
+	params.offset_y = (WIN_HEIGHT) / 4 + center.y;
+	return (params);
 }
 
 /**
@@ -91,56 +91,81 @@ void	draw_point(t_mlx_session *session, int x, int y, char *details, float scale
  * Return: SUCCESS if it succeeded, or FAIL otherwise
  */
 
-void draw_line(t_mlx_session *session, int x0, int y0, char *z0, int x1, int y1, char *z1,int scale)
+static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_parameters params)
 {
-	int	proj_x0 = x0, proj_y0 = y0;
-	int	proj_x1 = x1, proj_y1 = y1;
-	int	color = RED;
+	char	**items;
 
-	iso_project(&proj_x0, &proj_y0, atoi(z0), scale);
-	iso_project(&proj_x1, &proj_y1, atoi(z1), scale);
-    int dx = abs(proj_x1 - proj_x0);
-    int dy = abs(proj_y1 - proj_y0);
-    int sx = (proj_x0 < proj_x1) ? 1 : -1;
-    int sy = (proj_y0 < proj_y1) ? 1 : -1;
+	items = ft_split(origin.values, ",");
+	origin.z = atoi(items[0]);
+	origin.color = get_color(items[1]);
+	free_list(items);
+
+	items = ft_split(dest.values, ",");
+	dest.z = atoi(items[0]);
+	dest.color = get_color(items[1]);
+	free_list(items);
+
+	iso_project(&origin.x, &origin.y, origin.z, params.scale);
+	iso_project(&dest.x, &dest.y, dest.z, params.scale);
+    int dx = abs(dest.x - origin.x);
+    int dy = abs(dest.y - origin.y);
+   int sx = (origin.x < dest.x) ? 1 : -1;
+    int sy = (origin.y < dest.y) ? 1 : -1;
     int err = dx - dy;
 
     while (1) {
         // Draw the pixel
 
         // If we've reached the destination point, stop
-        if (proj_x0 == proj_x1 && proj_y0 == proj_y1) break;
+        if (origin.x == dest.x && origin.y == dest.y) break;
 
         int e2 = err * 2;
         if (e2 > -dy) {
             err -= dy;
-            proj_x0 += sx;
+            origin.x += sx;
         }
         if (e2 < dx) {
             err += dx;
-            proj_y0 += sy;
+            origin.y += sy;
         }
-        mlx_put_to_image(session->img, abs(proj_x0 + WIN_WIDTH / 2), abs(proj_y0 + WIN_HEIGHT / 3), color);
-		color--;
+        mlx_put_to_image(session->img, abs(origin.x + params.offset_x), abs(origin.y + params.offset_y), origin.color);
+		if (origin.color < dest.color)
+			origin.color--;
+		else if (origin.color > dest.color)
+			origin.color++;
 	}
 }
 
-void	draw_shape(t_mlx_session *session, char ***map)
+void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo)
 {
 	int	(i), (j);
-	float	(scale);
+	t_point			origin;
+	t_point			point_b;
+	t_point			point_a;
 	i = 0;
-	scale = get_scale(map);
-	while (map[i])
+	mapinfo.params = get_parameters(mapinfo.map);
+	while (mapinfo.map[i])
 	{
 		j = 0;
-		while (map[i][j])
+		while (mapinfo.map[i][j])
 		{
-			/*draw_point(session, j, i, map[i][j], scale);*/
-			if (map[i + 1])
-				draw_line(session, j, i + 1, map[i + 1][j], j, i, map[i][j], scale);
-			if (map[i][j + 1])
-				draw_line(session, j + 1, i, map[i][j + 1], j, i, map[i][j], scale);
+			origin.x = j;
+			origin.y = i;
+			origin.values = mapinfo.map[i][j];
+			if (mapinfo.map[i + 1])
+			{
+				point_a.x = j;
+				point_a.y = i + 1;
+				point_a.values = mapinfo.map[i + 1][j];
+				draw_line(session, origin, point_a, mapinfo.params);
+			}
+			if (mapinfo.map[i][j + 1])
+			{
+				point_b.x = j + 1;
+				point_b.y = i;
+				point_b.values = mapinfo.map[i][j + 1];
+				draw_line(session, origin, point_b, mapinfo.params);
+			}
 			j++;
 		}
 		i++;

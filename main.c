@@ -17,11 +17,12 @@
 # define MAP_SIZE 1024
 
 
-char	***check_map(int ac, char **av)
+t_mapinfo	check_map(int ac, char **av)
 {
 	int		(file_des), (inc);
-	char	(*line_read), (***map);
+	char	(*line_read);
 	size_t	line_len;
+	t_mapinfo	mapinfo;
 
 	if (ac != 2)
 	{
@@ -33,8 +34,8 @@ char	***check_map(int ac, char **av)
 		ft_printf("[ERROR]: No file %s\n", av[1]);
 		exit(1);
 	}
-	map = (char ***)ft_calloc(MAP_SIZE + 1, sizeof(char **));
-	if (!map)
+	mapinfo.map = (char ***)ft_calloc(MAP_SIZE + 1, sizeof(char **));
+	if (!mapinfo.map)
 	{
 		ft_printf("[ERROR]: Failed to allocate map size\n");
 		exit(1);
@@ -42,31 +43,31 @@ char	***check_map(int ac, char **av)
 	inc = 0;
 	while ((line_read = read_line(file_des)) != NULL)
 	{
-		map[inc] = ft_split(line_read, " \n");
+		mapinfo.map[inc] = ft_split(line_read, " \n");
 		if (inc == 0)
-			line_len = list_len(map[inc]);
-		if (list_len(map[inc]) < line_len)
+			line_len = list_len(mapinfo.map[inc]);
+		if (list_len(mapinfo.map[inc]) < line_len)
 		{
 			ft_printf("[ERROR]: Found wrong line length. Exiting.\n");
 			free(line_read);
-			free_double_list(map);
+			free_double_list(mapinfo.map);
 			exit(1);
 		}
 		inc++;
 		if (inc >= MAP_SIZE && (inc) % MAP_SIZE == 0)
-			map = (char ***)ft_realloc(map, inc * (sizeof(char **)), (inc + MAP_SIZE) * sizeof(char **));
+			mapinfo.map = (char ***)ft_realloc(mapinfo.map, inc * (sizeof(char **)), (inc + MAP_SIZE) * sizeof(char **));
 		free(line_read);
 	}
 	if (inc == 0)
 	{
-		free_double_list(map);
+		free_double_list(mapinfo.map);
 		free(line_read);
 		ft_printf("[ERROR]: No data found\n");
 		exit(0);
 	}
-	map[inc] = NULL;
+	mapinfo.map[inc] = NULL;
 	close(file_des);
-	return (map);
+	return (mapinfo);
 }
 
 /**
@@ -77,10 +78,10 @@ char	***check_map(int ac, char **av)
 	*/
 int main(int ac, char **av)
 {
-	char			***map;
+	t_mapinfo	mapinfo;
 	t_mlx_session	session;
 	t_img_data		img;
-	map = check_map(ac, av);
+	mapinfo = check_map(ac, av);
 	session.mlx = mlx_init();
 	session.mlx_win = NULL;
 	if (!session.mlx)
@@ -97,9 +98,9 @@ int main(int ac, char **av)
 	img.img = mlx_new_image(session.mlx, WIN_WIDTH, WIN_HEIGHT);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
 	session.img = &img;
-	draw_shape(&session, map);
+	draw_shape(&session, mapinfo);
 	mlx_put_image_to_window(session.mlx, session.mlx_win, session.img->img, 0, 0);
-	free_double_list(map);
+	free_double_list(mapinfo.map);
 	mlx_hook(session.mlx_win, KEY_PRESS_EVENT, KEY_PRESS_MASK, handle_key, &session);
 	mlx_loop(session.mlx);
 	return (0);
