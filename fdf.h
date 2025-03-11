@@ -83,17 +83,17 @@ typedef struct s_moves
 }	t_moves;
 
 /**
-	* s_mlx_session - struct holding addresses
+	* s_session - struct holding addresses
 	* of mlx session, window
 */
-typedef struct s_mxl_session
+typedef struct s_session
 {
 	void	*mlx;
 	void	*mlx_win;
 	t_img_data *img;
 	t_moves	moves;
 	t_mapinfo mapinfo;
-}	t_mlx_session;
+}	t_session;
 
 /*Counter functions*/
 size_t	list_len(char **list);
@@ -117,9 +117,9 @@ char *read_line(int fd);
 
 /*Mlx costum functions*/
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
-int	handle_key(int key_code, t_mlx_session *mlx_session);
+int	handle_key(int key_code, t_session *session);
 
 /*Drawing functions*/
-void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo);
+void	draw_shape(t_session *session, t_mapinfo mapinfo);
 
 #endif

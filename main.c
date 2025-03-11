@@ -79,7 +79,7 @@ t_mapinfo	check_map(int ac, char **av)
 int main(int ac, char **av)
 {
 	t_mapinfo	mapinfo;
-	t_mlx_session	session;
+	t_session	session;
 	t_img_data		img;
 	mapinfo = check_map(ac, av);
 	session.mlx = mlx_init();
