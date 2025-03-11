@@ -6,19 +6,15 @@
 /*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 20:21:56 by sboukiou          #+#    #+#             */
-/*   Updated: 2025/03/06 20:21:57 by sboukiou         ###   ########.fr       */
+/*   Updated: 2025/03/11 23:42:33 by sboukiou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fdf.h"
 
 #define BUFFER_SIZE 256
-/**
-* read_line - Reads a line from a given filename
-* Return: The line read from file or quits if errors
-* occured
-*/
-char *read_line(int fd)
+
+char	*read_line(int fd)
 {
 	size_t	idx;
 	size_t	total_size;

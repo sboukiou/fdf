@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   counters.c                                         :+:      :+:    :+:   */
+/*   math_extra.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/11 22:20:58 by sboukiou          #+#    #+#             */
-/*   Updated: 2025/03/11 22:21:07 by sboukiou         ###   ########.fr       */
+/*   Created: 2025/03/11 23:41:23 by sboukiou          #+#    #+#             */
+/*   Updated: 2025/03/11 23:41:59 by sboukiou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./fdf.h"
 
-size_t	list_len(char **list)
+int	distance(int x1, int y1, int x2, int y2)
 {
-	size_t	size;
-
-	size = 0;
-	if (!list)
-		return (size);
-	while (list[size])
-		size++;
-	return (size);
+	return (pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
-size_t	map_len(char ***map)
+int	ft_min(int a, int b)
 {
-	size_t	size;
+	if (a < b)
+		return (a);
+	return (b);
+}
 
-	size = 0;
-	if (!map)
-		return (size);
-	while (map[size])
-		size++;
-	return (size);
+int	ft_max(int a, int b)
+{
+	if (a > b)
+		return (a);
+	return (b);
 }

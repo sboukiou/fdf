@@ -4,7 +4,7 @@ NAME=fdf
 CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -g
 MLX_FLAGS=-Lmlx -lmlx -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
 
-MAIN_SRCS=main.c files.c memory.c math.c counters.c mlx.c drawer.c
+MAIN_SRCS=main.c files.c memory.c math.c counters.c mlx.c drawer.c algo_utils.c drawing_utils.c math_extra.c
 MAIN_OBJS=$(MAIN_SRCS:%.c=%.o)
 
 LIBFT_DIR=./dependencies/libft

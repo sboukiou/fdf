@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   memory.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/11 23:38:30 by sboukiou          #+#    #+#             */
+/*   Updated: 2025/03/11 23:39:21 by sboukiou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 void	free_list(char **list)
@@ -13,6 +25,7 @@ void	free_list(char **list)
 	}
 	free(list);
 }
+
 void	free_double_list(char ***list)
 {
 	int	i;
@@ -29,17 +42,8 @@ void	free_double_list(char ***list)
 	free(list);
 }
 
-
-/**
- * ft_realloc - Mimics the behavior of realloc
- * @old: old block to reallocate
- * @old_size: Old block size
- * @new_size:  The new requested size
- * Return: New block or NULL if errors occured
- */
 void	*ft_realloc(void *old, size_t old_size, size_t new_size)
 {
-
 	void	*new;
 
 	if (!old)
@@ -57,4 +61,3 @@ void	*ft_realloc(void *old, size_t old_size, size_t new_size)
 	free(old);
 	return (new);
 }
-
