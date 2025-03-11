@@ -70,7 +70,7 @@ static t_parameters	get_parameters(t_mlx_session *session)
 		{
 			projection.x = j;
 			projection.y = i;
-			iso_project(&projection.x, &projection.y, atoi(session->mapinfo.map[i][j]), params, session);
+			iso_project(&projection.x, &projection.y, ft_atoi(session->mapinfo.map[i][j]), params, session);
 			if (params.min_width > projection.x)
 				params.min_width = projection.x;
 			if (params.min_height > projection.y)
@@ -141,7 +141,7 @@ static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_par
 	char	**items;
 
 	items = ft_split(origin.values, ",");
-	origin.z = atoi(items[0]);
+	origin.z = ft_atoi(items[0]);
 	origin.color = get_color(items[1]);
 	if (!items[1])
 	{
@@ -153,7 +153,7 @@ static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_par
 	free_list(items);
 
 	items = ft_split(dest.values, ",");
-	dest.z = atoi(items[0]);
+	dest.z = ft_atoi(items[0]);
 	dest.color = get_color(items[1]);
 	if (!items[1])
 	{
@@ -166,6 +166,13 @@ static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_par
 
 	iso_project(&origin.x, &origin.y, origin.z, params, session);
 	iso_project(&dest.x, &dest.y, dest.z, params, session);
+	if (session->moves.rotate)
+	{
+		origin.y = origin.y * cos(session->moves.rotate) - origin.z * sin(session->moves.rotate);
+		origin.z = origin.y * sin(session->moves.rotate) + origin.z;
+		dest.y = dest.y * cos(session->moves.rotate) - dest.z * sin(session->moves.rotate);
+		dest.z = dest.y * sin(session->moves.rotate) + dest.z;
+	}
 	bresenham_draw(origin, dest, params, session);
 
 }

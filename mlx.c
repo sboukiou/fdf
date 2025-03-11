@@ -12,7 +12,6 @@
 
 #include "./fdf.h"
 #include <X11/keysym.h>
-#include <stdio.h>
 /**
 	* handle_key - Check if a given key is the escape
 	* @key_code: The number corresponding to the key
@@ -47,7 +46,7 @@ int	handle_key(int key_code, t_mlx_session *mlx_session)
 	if (key_code == XK_s)
 		mlx_session->moves.parallel = 0;
 	if (key_code == XK_r)
-		mlx_session->moves.rotate += 0.2;
+		mlx_session->moves.rotate += 0.098;
 	if (key_code == XK_z)
 		mlx_session->moves.z += 1;
 	if (key_code == XK_a)
