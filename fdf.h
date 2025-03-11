@@ -24,6 +24,8 @@
 # define WHITE 0xFFFFFF
 # define GREEN 0x00FF00
 # define BLUE 0xFF00FF
+# define DEFAULT_Z 0x99CCFF
+# define DEFAULT 0x00CC66
 /*Defining Macros for events*/
 # define KEY_PRESS_EVENT 2
 # define BTN_PRESS_EVENT 4
@@ -72,12 +74,12 @@ typedef struct s_mapinfo
 
 typedef struct s_moves
 {
-	int	up;
-	int	down;
-	int	left;
-	int	right;
-	int	zoom_in;
-	int	zoom_out;
+	int x;
+	int y;
+	float	zoom;
+	int	parallel;
+	float	rotate;
+	int	z;
 }	t_moves;
 
 /**

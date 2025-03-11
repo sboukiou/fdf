@@ -30,16 +30,26 @@ int	get_color(char *str)
 	return (color);
 }
 
-static void	iso_project(int *x, int *y, int z, float scale)
+static void	iso_project(int *x, int *y, int z, t_parameters params, t_mlx_session *session)
 {
 	int	(pos_x), (pos_y);
 	float	(angle);
 
 	angle = M_PI / 6;
-	pos_x = (*x - *y) * cos(angle) * scale;
-	pos_y = (*x + *y) * sin(angle) * scale - fabsf(z  * scale);
-	*x = pos_x;
-	*y = pos_y;
+	pos_x = (*x - *y) * cos(angle) * params.scale;
+	if (z != 0 && session->moves.z - z >= 0)
+		z += session->moves.z;
+	pos_y = (*x + *y) * sin(angle) * params.scale - fabsf(z * params.scale);
+	if (session->moves.parallel == 0)
+	{
+		*x = pos_x;
+		*y = pos_y;
+	}
+	else
+	{
+		*x = fabsf(*x * (params.scale));
+		*y = fabsf(*y * (params.scale));
+	}
 }
 
 static t_parameters	get_parameters(t_mlx_session *session)
@@ -53,13 +63,14 @@ static t_parameters	get_parameters(t_mlx_session *session)
 	params.min_height = INT_MAX;
 	params.max_width = INT_MIN;
 	params.max_height = INT_MIN;
+	params.scale = 1;
 	for (int i = 0; session->mapinfo.map[i]; i++)
 	{
 		for (int j = 0; session->mapinfo.map[i][j]; j++)
 		{
 			projection.x = j;
 			projection.y = i;
-			iso_project(&projection.x, &projection.y, atoi(session->mapinfo.map[i][j]), 1);
+			iso_project(&projection.x, &projection.y, atoi(session->mapinfo.map[i][j]), params, session);
 			if (params.min_width > projection.x)
 				params.min_width = projection.x;
 			if (params.min_height > projection.y)
@@ -73,15 +84,48 @@ static t_parameters	get_parameters(t_mlx_session *session)
 	scale_x = (WIN_WIDTH * 0.60) / (params.max_width - params.min_width);
 	scale_y = (WIN_HEIGHT * 0.60) / (params.max_height - params.min_height);
 	if (scale_x > scale_y)
-		params.scale = scale_y + session->moves.zoom_in - session->moves.zoom_out;
+		params.scale = scale_y;
 	else
 		params.scale = scale_x;
+	params.scale += session->moves.zoom;
 	center.x = (params.max_width - params.min_width);
 	center.y = (params.max_height - params.min_height);
 	(void)center;
-	params.offset_x = (WIN_WIDTH) / 2 + session->moves.right - session->moves.left;
-	params.offset_y = (WIN_HEIGHT) / 2 + session->moves.down - session->moves.up;
+	params.offset_x = (WIN_WIDTH) / 2 + session->moves.x;
+	params.offset_y = (WIN_HEIGHT) / 2 + session->moves.y;
 	return (params);
+}
+
+void 	bresenham_draw(t_point origin, t_point dest, t_parameters params, t_mlx_session *session)
+{
+	int dx = abs(dest.x - origin.x);
+	int dy = -abs(dest.y - origin.y);
+	int sx = origin.x < dest.x ? 1 : -1;
+	int sy = origin.y < dest.y ? 1 : -1;
+	int err = dx + dy;
+	int e2;
+	while (origin.x != dest.x || origin.y != dest.y) {
+		if (origin.x + params.offset_x > 0 && origin.y + params.offset_y > 0)
+			mlx_put_to_image(session->img, origin.x + params.offset_x, origin.y + params.offset_y, origin.color);
+
+		e2 = 2 * err;
+		if (e2 >= dy) {
+			if (origin.x == dest.x) {
+				break;
+			}
+			err += dy;
+			origin.x += sx;
+		}
+		if (e2 <= dx) {
+			if (origin.y == dest.y) {
+				break;
+			}
+			err += dx;
+			origin.y += sy;
+		}
+	}
+	if (origin.x + params.offset_x > 0 && origin.y + params.offset_y > 0)
+		mlx_put_to_image(session->img, origin.x + params.offset_x, origin.y + params.offset_y, origin.color);
 }
 
 /**
@@ -95,56 +139,34 @@ static t_parameters	get_parameters(t_mlx_session *session)
 static void draw_line(t_mlx_session *session,t_point origin, t_point dest, t_parameters params)
 {
 	char	**items;
-	int	(dx), (dy), (final_y), (final_x);
-	int	(d_param), (y_cord), (direction_y);
 
 	items = ft_split(origin.values, ",");
 	origin.z = atoi(items[0]);
 	origin.color = get_color(items[1]);
+	if (!items[1])
+	{
+		if (origin.z)
+			origin.color = DEFAULT_Z;
+		else
+			origin.color = DEFAULT;
+	}
 	free_list(items);
 
 	items = ft_split(dest.values, ",");
 	dest.z = atoi(items[0]);
 	dest.color = get_color(items[1]);
+	if (!items[1])
+	{
+		if (dest.z)
+			dest.color = DEFAULT_Z;
+		else
+			dest.color = DEFAULT;
+	}
 	free_list(items);
 
-	iso_project(&origin.x, &origin.y, origin.z, params.scale);
-	iso_project(&dest.x, &dest.y, dest.z, params.scale);
-	dx = origin.x - dest.x;
-	dy = origin.y - dest.y;
-	if (dy < 0)
-		direction_y = -1;
-	else
-		direction_y = 1;
-	if (origin.x > dest.x)
-	{
-		int temp;
-		temp = origin.x;
-		origin.x = dest.x;
-		dest.x = temp;
-		temp = origin.y;
-		origin.y = dest.y;
-		dest.y = temp;
-	}
-	if (dx != 0)
-	{
-		y_cord = origin.y;
-		d_param = 2 * dy - dx;
-		for (int i = 0; i <= dx + 1; i++)
-		{
-			final_x = origin.x + i + params.offset_x;
-			final_y = origin.y + i + params.offset_y;
-
-			if (final_x > 0 && final_y > 0)
-				mlx_put_to_image(session->img, final_x, final_y, WHITE);
-			if (d_param >= 0)
-			{
-				y_cord += direction_y;
-				d_param = d_param - 2 * dx;
-			}
-			d_param = d_param + 2 * dy;
-		}
-	}
+	iso_project(&origin.x, &origin.y, origin.z, params, session);
+	iso_project(&dest.x, &dest.y, dest.z, params, session);
+	bresenham_draw(origin, dest, params, session);
 
 }
 
@@ -155,9 +177,8 @@ void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo)
 	t_point			origin;
 	t_point			point_b;
 	t_point			point_a;
-	ft_printf("Called \n");
 	i = 0;
-	mapinfo.params = get_parameters(session);
+	session->mapinfo.params = get_parameters(session);
 	while (mapinfo.map[i])
 	{
 		j = 0;
@@ -171,14 +192,14 @@ void	draw_shape(t_mlx_session *session, t_mapinfo mapinfo)
 				point_a.x = j;
 				point_a.y = i + 1;
 				point_a.values = mapinfo.map[i + 1][j];
-				draw_line(session, origin, point_a, mapinfo.params);
+				draw_line(session, origin, point_a, session->mapinfo.params);
 			}
 			if (mapinfo.map[i][j + 1])
 			{
 				point_b.x = j + 1;
 				point_b.y = i;
 				point_b.values = mapinfo.map[i][j + 1];
-				draw_line(session, origin, point_b, mapinfo.params);
+				draw_line(session, origin, point_b, session->mapinfo.params);
 			}
 			j++;
 		}

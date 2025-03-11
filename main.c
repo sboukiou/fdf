@@ -84,12 +84,12 @@ int main(int ac, char **av)
 	mapinfo = check_map(ac, av);
 	session.mlx = mlx_init();
 	session.mlx_win = NULL;
-	session.moves.up = 0;
-	session.moves.down = 0;
-	session.moves.left = 0;
-	session.moves.right = 0;
-	session.moves.zoom_in = 0;
-	session.moves.zoom_out = 0;
+	session.moves.x = 0;
+	session.moves.y = 0;
+	session.moves.zoom = 0;
+	session.moves.parallel = 0;
+	session.moves.rotate = 0;
+	session.moves.z = 0;
 	if (!session.mlx)
 	{
 		ft_printf("[ERROR]: Failed to init mlx connection\n");
