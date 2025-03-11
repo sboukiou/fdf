@@ -30,30 +30,22 @@ int	get_color(char *str)
 	return (color);
 }
 
-static void	iso_project(int *x, int *y, int z, t_parameters params, t_session *session)
+void	iso_project(t_point *pt, t_parameters params, t_session *session)
 {
-	int	(pos_x), (pos_y);
-	float	(angle);
-
+	int (pos_x), (pos_y);
+	float (angle);
 	angle = M_PI / 6;
-	pos_x = (*x - *y) * cos(angle) * params.scale;
-	if (z)
-	{
-		if (z + session->moves.z >= 0)
-			z += session->moves.z;
-		if (session->moves.z && session->moves.z + z <= 0)
-			z = 0;
-	}
-	pos_y = (*x + *y) * sin(angle) * params.scale - fabsf(z * params.scale);
+	pos_x = (pt->x - pt->y) * cos(angle) * params.scale;
+	pos_y = (pt->x + pt->y) * sin(angle) * params.scale - fabsf(pt->z * params.scale);
 	if (session->moves.parallel == 0)
 	{
-		*x = abs(pos_x + params.offset_x);
-		*y = abs(pos_y + params.offset_y);
+		pt->x = abs(pos_x + params.offset_x);
+		pt->y = abs(pos_y + params.offset_y);
 	}
 	else
-	{
-		*x = fabsf(*x * (params.scale)) + params.offset_x;
-		*y = fabsf(*y * (params.scale)) + params.offset_y;
+{
+		pt->x = fabsf(pt->x * (params.scale)) + params.offset_x;
+		pt->y = fabsf(pt->y * (params.scale)) + params.offset_y;
 	}
 }
 
@@ -75,7 +67,8 @@ static t_parameters	get_parameters(t_session *session)
 		{
 			projection.x = j;
 			projection.y = i;
-			iso_project(&projection.x, &projection.y, ft_atoi(session->mapinfo.map[i][j]), params, session);
+			projection.z = atoi(session->mapinfo.map[i][j]);
+			iso_project(&projection, params, session);
 			if (params.min_width > projection.x)
 				params.min_width = projection.x;
 			if (params.min_height > projection.y)
@@ -86,8 +79,8 @@ static t_parameters	get_parameters(t_session *session)
 				params.max_height = projection.y;
 		}
 	}
-	scale_x = (WIN_WIDTH * 0.60) / (params.max_width - params.min_width);
-	scale_y = (WIN_HEIGHT * 0.60) / (params.max_height - params.min_height);
+	scale_x = (WIN_WIDTH * 0.25) / (params.max_width - params.min_width);
+	scale_y = (WIN_HEIGHT * 0.25) / (params.max_height - params.min_height);
 	if (scale_x > scale_y)
 		params.scale = scale_y;
 	else
@@ -101,7 +94,7 @@ static t_parameters	get_parameters(t_session *session)
 	return (params);
 }
 
-void 	bresenham_draw(t_point origin, t_point dest, t_parameters params, t_session *session)
+void 	bresenham_draw(t_point origin, t_point dest, t_session *session)
 {
 	int dx = abs(dest.x - origin.x);
 	int dy = -abs(dest.y - origin.y);
@@ -110,7 +103,7 @@ void 	bresenham_draw(t_point origin, t_point dest, t_parameters params, t_sessio
 	int err = dx + dy;
 	int e2;
 	while (origin.x != dest.x || origin.y != dest.y) {
-		if (origin.x + params.offset_x > 0 && origin.y + params.offset_y > 0)
+		if (origin.x > 0 && origin.y > 0)
 			mlx_put_to_image(session->img, origin.x, origin.y, origin.color);
 
 		e2 = 2 * err;
@@ -129,7 +122,7 @@ void 	bresenham_draw(t_point origin, t_point dest, t_parameters params, t_sessio
 			origin.y += sy;
 		}
 	}
-	if (origin.x + params.offset_x > 0 && origin.y + params.offset_y > 0)
+	if (origin.x > 0 && origin.y > 0)
 		mlx_put_to_image(session->img, origin.x, origin.y, origin.color);
 }
 
@@ -169,8 +162,8 @@ static void draw_line(t_session *session,t_point origin, t_point dest, t_paramet
 	}
 	free_list(items);
 
-	iso_project(&origin.x, &origin.y, origin.z, params, session);
-	iso_project(&dest.x, &dest.y, dest.z, params, session);
+	iso_project(&origin, params, session);
+	iso_project(&dest, params, session);
 	if (session->moves.rotate)
 	{
 		origin.y = origin.y * cos(session->moves.rotate) - origin.z * sin(session->moves.rotate);
@@ -178,7 +171,7 @@ static void draw_line(t_session *session,t_point origin, t_point dest, t_paramet
 		dest.y = dest.y * cos(session->moves.rotate) - dest.z * sin(session->moves.rotate);
 		dest.z = dest.y * sin(session->moves.rotate) + dest.z;
 	}
-	bresenham_draw(origin, dest, params, session);
+	bresenham_draw(origin, dest, session);
 
 }
 

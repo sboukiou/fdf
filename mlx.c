@@ -30,17 +30,17 @@ int	handle_key(int key_code, t_session *session)
 		exit(0);
 	}
 	if (key_code == XK_k)
-		session->moves.y -= 15;
+		session->moves.y -= 5;
 	if (key_code == XK_h)
-		session->moves.x -= 15;
+		session->moves.x -= 5;
 	if (key_code == XK_j)
-		session->moves.y += 15;
+		session->moves.y += 5;
 	if (key_code == XK_l)
-		session->moves.x += 15;
+		session->moves.x += 5;
 	if (key_code == XK_i)
-		session->moves.zoom += 0.1;
+		session->moves.zoom += 0.3;
 	if (key_code == XK_o && session->mapinfo.params.scale >= 0)
-		session->moves.zoom -= 0.1;
+		session->moves.zoom -= 0.3;
 	if (key_code == XK_p)
 	{
 		session->moves.parallel = 1;
@@ -49,11 +49,17 @@ int	handle_key(int key_code, t_session *session)
 	if (key_code == XK_s)
 		session->moves.parallel = 0;
 	if (key_code == XK_r)
-		session->moves.rotate += 0.098;
-	if (key_code == XK_z)
-		session->moves.z += 1;
-	if (key_code == XK_a)
-		session->moves.z -= 1;
+		session->moves.rotate += 0.98;
+	if (key_code == XK_e)
+		session->moves.rotate -= 0.98;
+	if (key_code == XK_Tab)
+	{
+		session->moves.rotate = 0;
+		session->moves.parallel = 0;
+		session->moves.x = 0;
+		session->moves.y = 0;
+		session->moves.zoom = 0;
+	}
 
 	mlx_destroy_image(session->mlx, session->img->img);
 	session->img->img = mlx_new_image(session->mlx, WIN_WIDTH, WIN_HEIGHT);
