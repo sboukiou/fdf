@@ -35,14 +35,6 @@ void	draw_line(t_session *session, t_point origin, t_point dest)
 {
 	get_z_color(&origin);
 	get_z_color(&dest);
-	origin.y = origin.y * cos(session->moves.rotate)
-		- origin.z * sin(session->moves.rotate);
-	origin.z = origin.y * sin(session->moves.rotate)
-		+ origin.z * cos(session->moves.rotate);
-	dest.y = dest.y * cos(session->moves.rotate)
-		- dest.z * sin(session->moves.rotate);
-	dest.z = dest.y * sin(session->moves.rotate)
-		+ dest.z * cos(session->moves.rotate);
 	iso_project(&origin, session->mapinfo.params, session);
 	iso_project(&dest, session->mapinfo.params, session);
 	bresenham_draw(origin, dest, session);

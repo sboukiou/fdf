@@ -74,20 +74,27 @@ int	get_color(char *str)
 
 void	iso_project(t_point *pt, t_parameters params, t_session *session)
 {
-	int (pos_x), (pos_y);
-	float (angle);
-	angle = M_PI / 6;
-	pos_x = (pt->x - pt->y) * cos(angle) * params.scale;
-	pos_y = (pt->x + pt->y) * sin(angle) * params.scale
-		- fabsf(pt->z * params.scale);
-	if (session->moves.parallel == 0)
+	(void)params;
+	if (pt->x * session->moves.zoom >=  0)
+		pt->x *= (session->moves.zoom);
+	if (pt->y * session->moves.zoom >= 0)
+		pt->y *= (session->moves.zoom);
+	if (pt->z * session->moves.zoom >= 0)
+		pt->z *= (session->moves.zoom);
+	if (session->moves.parallel == 1)
 	{
-		pt->x = abs(pos_x + params.offset_x);
-		pt->y = abs(pos_y + params.offset_y);
+		pt->x = pt->x;
+		pt->y = pt->y;
 	}
 	else
 	{
-		pt->x = fabsf(pt->x * (params.scale)) + params.offset_x;
-		pt->y = fabsf(pt->y * (params.scale)) + params.offset_y;
+		pt->x = (pt->x - pt->y) * cos(0.8);
+		pt->y = (pt->x + pt->y) * sin(0.8) - pt->z;
 	}
+	pt->y = pt->y * cos(session->moves.rotate)
+		- pt->z * sin(session->moves.rotate);
+	pt->z = pt->y * sin(session->moves.rotate)
+		+ pt->z * cos(session->moves.rotate);
+	pt->x += WIN_WIDTH / 2 + session->moves.x;
+	pt->y += WIN_HEIGHT / 4 + session->moves.y;
 }

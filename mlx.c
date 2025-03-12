@@ -25,7 +25,7 @@ void	handle_events(t_session *session, int key_code)
 		session->moves.x += 5;
 	if (key_code == XK_i)
 		session->moves.zoom += 0.3;
-	if (key_code == XK_o && session->mapinfo.params.scale >= 0)
+	if (key_code == XK_o && session->moves.zoom >= 0)
 		session->moves.zoom -= 0.3;
 	if (key_code == XK_p)
 	{

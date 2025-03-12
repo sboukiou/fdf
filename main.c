@@ -90,7 +90,7 @@ static void	init_session_members(t_session *session)
 	session->mlx_win = NULL;
 	session->moves.x = 0;
 	session->moves.y = 0;
-	session->moves.zoom = 0;
+	session->moves.zoom = 10;
 	session->moves.parallel = 0;
 	session->moves.rotate = 0;
 	session->moves.z = 0;

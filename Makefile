@@ -1,5 +1,6 @@
 CC=cc
 NAME=fdf
+NAME_BONUS=fdf_bonus
 
 CMP_FLAGS=-Wall -Wextra -Werror -I/usr/include -Imlx_linux -O3 -g
 MLX_FLAGS=-Lmlx -lmlx -L/usr/lib -Imlx_linux -lXext -lX11 -lm -lz
@@ -33,9 +34,10 @@ $(NAME): $(OBJ_ALL)
 		$(CC)  $(OBJ_ALL)  $(MLX_FLAGS) -o $(NAME)
 
 
-
+bonus: $(OBJ_ALL)
+		$(CC)  $(OBJ_ALL)  $(MLX_FLAGS) -o $(NAME_BONUS)
 clean:
 	$(RM) $(OBJ_ALL)
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(NAME_BONUS)
 re: fclean all
