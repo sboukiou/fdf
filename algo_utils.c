@@ -75,7 +75,7 @@ int	get_color(char *str)
 void	iso_project(t_point *pt, t_parameters params, t_session *session)
 {
 	(void)params;
-	if (pt->x * session->moves.zoom >=  0)
+	if (pt->x * session->moves.zoom >= 0)
 		pt->x *= (session->moves.zoom);
 	if (pt->y * session->moves.zoom >= 0)
 		pt->y *= (session->moves.zoom);

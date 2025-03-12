@@ -29,12 +29,13 @@ OBJ_ALL=$(MAIN_OBJS) $(LIBFT_OBJS) $(PRINTF_OBJS)
 
 
 all: $(NAME)
+bonus: $(NAME_BONUS)
 
 $(NAME): $(OBJ_ALL)
 		$(CC)  $(OBJ_ALL)  $(MLX_FLAGS) -o $(NAME)
 
 
-bonus: $(OBJ_ALL)
+$(NAME_BONUS):$(OBJ_ALL)
 		$(CC)  $(OBJ_ALL)  $(MLX_FLAGS) -o $(NAME_BONUS)
 clean:
 	$(RM) $(OBJ_ALL)

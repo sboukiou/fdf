@@ -100,5 +100,6 @@ int	quit_session(t_session *session)
 	mlx_destroy_window(session->mlx, session->mlx_win);
 	mlx_destroy_display(session->mlx);
 	free(session->mlx);
+	free_double_list(session->mapinfo.map);
 	exit(0);
 }

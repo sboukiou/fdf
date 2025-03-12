@@ -148,6 +148,7 @@ void	*ft_realloc(void *old, size_t old_size, size_t new_size);
 char	*read_line(int fd);
 
 /*Mlx costum functions*/
+int		quit_session(t_session *session);
 void	mlx_put_to_image(t_img_data *img, int x, int y, int color);
 int		handle_key(int key_code, t_session *session);
 

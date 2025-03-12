@@ -124,6 +124,7 @@ int	main(int ac, char **av)
 	mlx_put_image_to_window(session.mlx,
 		session.mlx_win, session.img->img, 0, 0);
 	mlx_hook(session.mlx_win, KEY_PRESS_EVENT, 1L << 0, handle_key, &session);
+	mlx_hook(session.mlx_win, 17, 1L << 0, quit_session, &session);
 	mlx_loop(session.mlx);
 	return (0);
 }
