@@ -6,7 +6,7 @@
 /*   By: sboukiou <sboukiou@1337.ma>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:17:28 by sboukiou          #+#    #+#             */
-/*   Updated: 2025/03/11 23:46:10 by sboukiou         ###   ########.fr       */
+/*   Updated: 2025/03/12 00:43:26 by sboukiou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ void	handle_events(t_session *session, int key_code)
 	if (key_code == XK_s)
 		session->moves.parallel = 0;
 	if (key_code == XK_r)
-		session->moves.rotate += 0.98;
+		session->moves.rotate += 0.1;
 	if (key_code == XK_e)
-		session->moves.rotate -= 0.98;
+		session->moves.rotate -= 0.1;
 }
 
 /**
